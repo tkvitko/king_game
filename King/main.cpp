@@ -10,6 +10,7 @@
 #include <random>
 #include <functional>
 #include "config_file.h"
+#include "utils.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -334,14 +335,14 @@ private:
         std::cout << "Вы заработали " << revenue << " роллодов на туристах" << std::endl;
         if (koef_2 != 0 && !(koef_1 - koef_2 >= this->last_year_tourists_revenue)) {
             std::cout << "Поток туристов уменьшился, потому что ";
-            short reason = this->_get_random_int_from_range(0, 10);
-            if (reason <= 2) {
+            short reason = get_random_choise(5, 20);
+            if (reason == 1) {
                 std::cout << "в озерах стало меньше рыбы из-за загрязнения воды";
-            } else if (reason <= 4) {
+            } else if (reason == 2) {
                 std::cout << "в небе стало меньше птиц из-за загрязнения воздуха";
-            } else if (reason <= 6) {
+            } else if (reason == 3) {
                 std::cout << "минеральные ванны портятся из-за загрязнения воды";
-            } else if (reason <= 8) {
+            } else if (reason == 4) {
                 std::cout << "из-за неприятного смога не понежиться на солнышке";
             } else {
                 std::cout << "отели потеряли популярность из-за сильного смога";
@@ -477,10 +478,10 @@ public:
         // если слишком много погибших
         if (this->died_count > 200) {
             std::cout << this->died_count << " жителей умерло за год! И-за такого ужасного управления вас не только лишили должности и сняли с занимаемого поста, ";
-            short reason = this->_get_random_int_from_range(0, 10);
-            if (reason <= 3) {
+            short reason = get_random_choise(3, 33);
+            if (reason == 1) {
                 std::cout << "но и выбили вам левый глаз!";
-            } else if (reason <= 6) {
+            } else if (reason == 2) {
                 std::cout << "еще вы заработали очень плохую репутацию.";
             } else {
                 std::cout << "но и назвали предателем родины.";
@@ -529,21 +530,21 @@ int main(int argc, const char * argv[]) {
 
     GameState game = GameState();
     game.print_header();
-    
+
     std::string show_intro = "";
     std::cout << "Показать инструкцию? (y/n) ";
     std::cin >> show_intro;
     if (show_intro == "y") {
         game.print_intro();
     }
-    
+
     std::string resume = "";
     std::cout << "Хотите сыграть обычную игру (1) или настроить вручную стартовые параметры (2)? ";
     std::cin >> resume;
     if (resume == "2") {
         game.get_resume_data();
     }
-    
+
     while (true) {
         game.init_new_year();
         game.print_state();
