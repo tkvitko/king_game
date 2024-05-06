@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.20)
+project(king_game)
+if(MSVC)
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+endif()
+add_executable(king_game King/main.cpp)
+target_compile_features(king_game PRIVATE cxx_std_17)
