@@ -11,6 +11,7 @@
 #include <functional>
 #include "config_file.h"
 #include "utils.hpp"
+#include "strings.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -53,6 +54,7 @@ private:
     int start_balance_max = 61000;
     int start_contrymen_min = 490;
     int start_contrymen_max = 510;
+    int price_for_cutting_down_forest = 1;
     
     // режим
     bool custom_game = false;    // обычный режим игры без ввода стартовых данных пользователем
@@ -229,6 +231,27 @@ private:
         this->money_spent_for_pollution_control = money_for_pollution_control;
     }
     
+    void _cut_down_forest() {
+        // процесс вырубки леса
+        int cut_down_square = 0;
+        while (true) {
+            cut_down_square = this->_request_int_value("Сколько квадратных миль леса вы хотите вырубить? ");
+            if (cut_down_square > this->forest_land) {
+                std::cout << "Подумайте еще раз. У вас осталось лишь " << this->forest_land << " квадртаных миль леса" << std::endl;
+            } else {
+                break;
+            };
+        }
+        this->forest_land -= cut_down_square;
+        this->_add_money(price_for_cutting_down_forest * cut_down_square);
+        short deaths_when_cutting = get_random_choise(1, 5);
+        if (deaths_when_cutting == 1) {
+            int dead_count = this->countrymen * 0.1;
+            this->countrymen -= dead_count;
+            std::cout << "Случилось несчатье при рубке! " << dead_count << " жителей завалило деревьями." << std::endl;
+        }
+    }
+    
     void _count_deaths() {
         // подсчет погибших
         
@@ -371,8 +394,7 @@ public:
     
     void print_intro() {
         // вывести интро
-        
-        std::cout << "Поздравляем! Вас только что избрали премьер-министром Сетац Детину - маленького коммунистического острова размером 30 на 70 миль. Ваша задача - управлять бюджетом страны и распределять деньги из общественной казны. Денежная единица - роллод, и каждому жителю нужно " << this->cost_of_living << " роллодов в год чтобы выжить. Доход поступает за счет сельского хозяйства и туристов, посещающих ваши великолепные леса для охоты, рыбалки и просто прогулок. Часть вашей земли - сельскохозяйственная, но она так же богата полезными ископаемыми и может быть продана иностранной промышленности, которая привезет своих собственных рабочих. Засев квадратной мили сельскохозяйственной земли стоит 10-15 роллодов в год. Ваша цель - завершить ваш 8-летний срок правления. Удачи!\n\n" << std::endl;
+        std::cout << INTRO_PART_1 << this->cost_of_living << INTRO_PART_2 << std::endl;
     }
     
     void print_state() {
@@ -450,6 +472,7 @@ public:
         this->_distribute_money_to_countryman();
         this->_plant_farm_land();
         this->_pollution_control();
+        this->_cut_down_forest();
     }
     
     void process_year() {
@@ -477,14 +500,14 @@ public:
         
         // если слишком много погибших
         if (this->died_count > 200) {
-            std::cout << this->died_count << " жителей умерло за год! И-за такого ужасного управления вас не только лишили должности и сняли с занимаемого поста, ";
+            std::cout << this->died_count << MESSAGE_ABOUT_DIES;
             short reason = get_random_choise(3, 33);
             if (reason == 1) {
-                std::cout << "но и выбили вам левый глаз!";
+                std::cout << MESSAGE_ABOUT_DIES_END_1;
             } else if (reason == 2) {
-                std::cout << "еще вы заработали очень плохую репутацию.";
+                std::cout << MESSAGE_ABOUT_DIES_END_2;
             } else {
-                std::cout << "но и назвали предателем родины.";
+                std::cout << MESSAGE_ABOUT_DIES_END_3;
             }
             std::cout << std::endl;
             return true;
@@ -492,25 +515,25 @@ public:
         
         // если слишком мало жителей
         if (this->countrymen < 343) {
-            std::cout << "Больше трети населения умерло с тех пор как вы были избраны. Население (оставшееся) ненавидит вас." << std::endl;
+            std::cout << GAME_OVER_BECAUSE_DIES << std::endl;
             return true;
         }
         
         // если слишком много денег осталось в казне
         if (this->balance / 100 > 5 && this->died_count - this->died_because_of_pollution >= 2) {
-            std::cout << "В казне остались не потраченные деньги. В результате некоторые жители умерли от голода. Население в ярости. Вы должны или уйти в отставку, или покончить собой. Выбор за вами. Если выберете второе, просьба выключить компьютер перед тем, как приступите." << std::endl;
+            std::cout << GAME_OVER_BECAUSE_BALANCE << std::endl;
             return true;
         }
         
         // если слишком много иностранцев
         if (this->foreigners > this->countrymen) {
-            std::cout << "Число иностранных рабочих превысило число жителей. Будучи в меньшинстве, они восстали и захватили власть в стране" << std::endl;
+            std::cout << GAME_OVER_BECAUSE_FOREINERS << std::endl;
             return true;
         }
         
         // победа в игре
         if (this->years == 7) {
-            std::cout << "Поздравляем! Вы успешно завершили ваш 8-летний срок на занимаемой должности. Конечно, вам чрезвычайно повезло. Тем не менее, это огромное достижение. Прощайте и удачи! Она, вероятно, вам пригодится, если вы из тех людей, которые играют в эту игру.";
+            std::cout << GAME_OVER_SUCCESS;
             return true;
         }
         
@@ -532,14 +555,14 @@ int main(int argc, const char * argv[]) {
     game.print_header();
 
     std::string show_intro = "";
-    std::cout << "Показать инструкцию? (y/n) ";
+    std::cout << QUESTION_ABOUT_INTRO;
     std::cin >> show_intro;
     if (show_intro == "y") {
         game.print_intro();
     }
 
     std::string resume = "";
-    std::cout << "Хотите сыграть обычную игру (1) или настроить вручную стартовые параметры (2)? ";
+    std::cout << QUESTION_ABOUT_GAME_MODE;
     std::cin >> resume;
     if (resume == "2") {
         game.get_resume_data();
