@@ -8,10 +8,16 @@
 #include <random>
 #include <ctime>
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "utils.hpp"
 
 short get_random_choise(short choises_number, short probability) {
     // Функция вернет выпавший вариант в соответствии с вероятностью выпадения
+    
+    // сон секунду на случай частых вызовов
+    std::chrono::milliseconds timespan(1000);
+    std::this_thread::sleep_for(timespan);
     
     // случайное значение от 0 до 99
     std::srand(std::time(0));
