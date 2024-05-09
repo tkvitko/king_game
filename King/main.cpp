@@ -42,7 +42,6 @@ class GameState {
 private:
     
     // константы
-    int initial_land = 2000;
     int cost_of_living = 100;
     int cost_of_funeral = 9;
     int pollution_control_factor = 25;
@@ -67,17 +66,17 @@ private:
     int balance = 0;  // количество денег в казне
     
     // люди
-    int countrymen = 0;  // количество жителей
-    int foreigners = 0; // количество иностранных рабочих
+    int countrymen = 0;     // количество жителей
+    int foreigners = 0;     // количество иностранных рабочих
     
     // земли
-    int total_land = initial_land;  // общая площадь земли
-    unsigned int forest_land = 1000; // площадь леса
+    int farm_land = 1000;   // площадь сельхоз земли
+    int forest_land = 1000; // площадь леса
 
     // параметры текущего года
     int died_count = 0;                  // общее количество погибших жителей
     int died_because_of_pollution = 0;   // количество погибших жителей по причине загрязнения
-    int population_change = 0;                    // изменение населения
+    int population_change = 0;           // изменение населения
     
     // экономика текущего года
     int cost_of_planting_land = 0;       // стоимость засева земли
@@ -101,7 +100,7 @@ private:
     void read_config() {
         // чтение конфигурации
         std::vector<std::string> ln = {
-            "initial_land",
+            "farm_land",
             "forest_land",
             "cost_of_living",
             "cost_of_funeral",
@@ -119,7 +118,7 @@ private:
         if(! f_in) {
         } else {
             CFG::ReadFile(f_in, ln,
-                          this->total_land,
+                          this->farm_land,
                           this->forest_land,
                           this->cost_of_living,
                           this->cost_of_funeral,
@@ -147,8 +146,6 @@ private:
         return answer;
     }
     
-    unsigned short _get_countryman_count() { return this->countrymen;  }
-    unsigned short _get_farm_land_square() { return this->total_land - this->forest_land;  }
     long _add_money(int amount) {return this->balance += amount; }
     long _spend_money(const int amount) {
         if (amount <= this->balance) {
@@ -167,13 +164,12 @@ private:
         short square_to_sell = 0;
         while (true) {
             square_to_sell = this->_request_int_value("Сколько квадратных миль земли вы хотите продать под промышленность? ");
-            if (square_to_sell < this->_get_farm_land_square()) {
+            if (square_to_sell < this->farm_land) {
                 break;
             } else {
-                std::cout << "Подумайте ещё раз. У вас есть всего " << this->_get_farm_land_square() << " квадратных миль сельскохозяйственной земли." << std::endl;
+                std::cout << "Подумайте ещё раз. У вас есть всего " << this->farm_land << " квадратных миль сельскохозяйственной земли." << std::endl;
             }
         };
-        this->total_land -= square_to_sell;
         this->_add_money(this->price_of_selling_land * square_to_sell);
         this->sold_square = square_to_sell;
     }
@@ -198,9 +194,9 @@ private:
         short square_to_plant = 0;
         while (true) {
             square_to_plant = this->_request_int_value("Сколько квадратных миль земли вы хотите засеять? ");
-            if (square_to_plant > this->_get_farm_land_square()) {
-                std::cout << "Увы, у вас есть только " << this->_get_farm_land_square() << " квадратных миль сельскохозяйственных земель" << std::endl;
-            } else if (square_to_plant > this->_get_countryman_count() * square_countryman_can_plant) {
+            if (square_to_plant > this->farm_land) {
+                std::cout << "Увы, у вас есть только " << this->farm_land << " квадратных миль сельскохозяйственных земель" << std::endl;
+            } else if (square_to_plant > this->countrymen * square_countryman_can_plant) {
                 std::cout << "Увы, каждый житель может засеять только " << square_countryman_can_plant << " квадратные мили" << std::endl;
             } else if (square_to_plant * this->cost_of_planting_land > this->balance) {
                 std::cout << "Подумайте еще раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
@@ -239,6 +235,7 @@ private:
             };
         }
         this->forest_land -= cut_down_square;
+        this->farm_land += cut_down_square;
         this->_add_money(price_for_cutting_down_forest * cut_down_square);
         short deaths_when_cutting = get_random_choise(1, 5);
         if (deaths_when_cutting == 1) {
@@ -259,7 +256,7 @@ private:
         
         // погибшие от загрязнений
         // базовое значение - процент от площади земли, проданной под промышленность
-        this->died_because_of_pollution = static_cast<int>(this->_get_random_float_from_zero_to_one() * (this->initial_land - this->total_land));
+        this->died_because_of_pollution = static_cast<int>(this->_get_random_float_from_zero_to_one() * (this->sold_square));
         // уменьшение базового значения, если на контроль загрязнений было выделено больше порога (фактора)
         if (this->money_spent_for_pollution_control >= this->pollution_control_factor) {
             this->died_because_of_pollution = static_cast<int>(this->died_because_of_pollution / (this->money_spent_for_pollution_control / this->pollution_control_factor));
@@ -276,8 +273,10 @@ private:
             this->balance -= funeral_cost;  // вычитание из казны
             if (this->balance < 0) {
                 std::cout << "В казне не хватает денег на похороны, придется продать часть земли" << std::endl;
-                std::cout << "total land " << this->total_land << " balance " << this->balance << " price_of_selling_land " << this->price_of_selling_land << " division " << this->balance / this->price_of_selling_land << std::endl;
-                this->total_land += this->balance / this->price_of_selling_land;    // компенсация отрицательного баланса за счет продажи земли
+                std::cout << "farm land " << this->farm_land << " balance " << this->balance << " price_of_selling_land " << this->price_of_selling_land << " division " << this->balance / this->price_of_selling_land << std::endl;
+                // компенсация отрицательного баланса за счет продажи земли
+                // подозрительный момент, т.к. по сути земля продается промшленности, но эта продажа уже нигде не учитывается в вопросах, связанных с промышленностью
+                this->farm_land += this->balance / this->price_of_selling_land;
                 this->balance = 0;
             }
         }
@@ -301,7 +300,7 @@ private:
         long over_disctibuted_money = this->distributed_money / this->cost_of_living - this->countrymen;
         short countrymen_change = static_cast<int>(over_disctibuted_money / 10
                                                    + this->money_spent_for_pollution_control / this->pollution_control_factor
-                                                   - ((this->initial_land - this->total_land) / 50 )
+                                                   - ((this->sold_square) / 50 )
                                                    - this->died_count / 2 );
         std::cout << "Население изменилось: " << countrymen_change << " человек";
         if (countrymen_change < 0) {
@@ -317,7 +316,7 @@ private:
         // подсчет урожая
         
         // потери урожая из-за загрязнений
-        short lost_farm_land = static_cast<int>((this->initial_land - this->total_land) * (this->_get_random_float_from_zero_to_one() + 1.5) / 2);
+        short lost_farm_land = static_cast<int>((this->sold_square) * (this->_get_random_float_from_zero_to_one() + 1.5) / 2);
         if (lost_farm_land > this->planted_square) {
             lost_farm_land = this->planted_square;
         }
@@ -346,7 +345,7 @@ private:
         // подсчет доходов с туристов
         
         short koef_1 = static_cast<short>(this->_get_settled() * 22 + this->_get_random_float_from_zero_to_one() * 500);
-        short koef_2 = static_cast<short>(( this->initial_land - this->total_land) * 15);
+        short koef_2 = static_cast<short>(( this->sold_square) * 15);
         short revenue = 0;
         
         if (koef_1 > koef_2) {
@@ -446,8 +445,6 @@ public:
         this->read_config();
     }
     
-    int get_total_land() {return this->total_land;}
-    
     void print_header() {
         // вывести приветствие
         
@@ -474,7 +471,7 @@ public:
         } else {
             std::cout << std::endl;
         };
-        std::cout << "У нас " << this->total_land << " квадратных миль земли: " << this->_get_farm_land_square() << " сельхоз и " << this->forest_land << " леса" << std::endl;
+        std::cout << "У нас " << this->farm_land + this->forest_land << " квадратных миль земли: " << this->farm_land << " сельхоз и " << this->forest_land << " леса" << std::endl;
         std::cout << "В этом году промышленность готова платить " << this->price_of_selling_land << " роллодов за квадратную милю, а стоимость засева одной квадратной мили равна " << this->cost_of_planting_land << std::endl ;
     }
     
@@ -498,7 +495,7 @@ public:
         this->balance = balance;
         this->countrymen = countrymen;
         this->foreigners = foreigners;
-        this->total_land = this->forest_land + farm_land;
+        this->farm_land = farm_land;
     }
     
     void get_resume_data() {
@@ -566,8 +563,8 @@ public:
         std::cout << year_hash << "\n" << std::endl;
         
         // если не хватило земли по итогам продажи для компенсации затрат на похороны:
-        if (this->total_land < 0) {
-            std::cout << "Закончилась земля" << std::endl;
+        if (this->farm_land < 0) {
+            std::cout << "Закончилась сельхоз земля" << std::endl;
             return true;
         }
         
@@ -658,10 +655,10 @@ int main(int argc, const char * argv[]) {
         game.get_gamer_decisions();
 
         // ежемесячные случайные события
-        for (size_t i = 0; i < 12; ++i) {
-            std::cout << "...идет месяц " << i + 1 << std::endl;
-            game.process_random_evet();
-        }
+//        for (size_t i = 0; i < 12; ++i) {
+//            std::cout << "...идет месяц " << i + 1 << std::endl;
+//            game.process_random_evet();
+//        }
 
         game.process_year();
         bool is_game_over = game.get_year_results();
