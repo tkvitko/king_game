@@ -41,3 +41,16 @@ short get_random_choise(short choises_number, short probability) {
     // если интервалы закончились, а значение не встретилось, возвращаем 0
     return 0;
 }
+
+
+int get_random_short_from_range(const int min_value, const int max_value) {
+    int range = max_value - min_value;
+    // сон секунду на случай частых вызовов
+//    std::chrono::milliseconds timespan(1000);
+//    std::this_thread::sleep_for(timespan);
+    
+    // случайное значение из range
+    std::srand(std::time(0));
+    int result = std::rand() % range + 1;
+    return min_value + result;
+}

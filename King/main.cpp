@@ -71,7 +71,7 @@ private:
     int foreigners = 0; // количество иностранных рабочих
     
     // земли
-    unsigned int total_land = initial_land;  // общая площадь земли
+    int total_land = initial_land;  // общая площадь земли
     unsigned int forest_land = 1000; // площадь леса
 
     // параметры текущего года
@@ -80,10 +80,9 @@ private:
     int population_change = 0;                    // изменение населения
     
     // экономика текущего года
-    unsigned int cost_of_planting_land = 0;       // стоимость засева земли
-    unsigned int price_of_selling_land = 0;       // цена продажи земли
-    unsigned int imcome_from_tourism = 0;         // доход от туризма
-    unsigned int settled = this->countrymen - this->population_change; // оседлые жители
+    int cost_of_planting_land = 0;       // стоимость засева земли
+    int price_of_selling_land = 0;       // цена продажи земли
+    int imcome_from_tourism = 0;         // доход от туризма
     
     // решения текущего года
     int sold_square = 0;
@@ -95,13 +94,9 @@ private:
     short last_year_lost_farm_land = 0;     // потери урожая
     int last_year_tourists_revenue = 0;   // заработок на туристах
     
-    // приватные методы для внутренней работы
-    template <class T>
-    T _get_random_int_from_range(const T min_value, const T max_value) {
-        std::default_random_engine generator;
-        std::uniform_int_distribution<T> distribution(min_value, max_value);
-        return distribution(generator);
-    };
+    short _get_settled() {
+        return this->countrymen - this->population_change; // оседлые жители
+    }
     
     void read_config() {
         // чтение конфигурации
@@ -163,8 +158,8 @@ private:
     
     void _set_prices_for_land() {
         // установка цен на продажу земли и посев на земле
-        this->cost_of_planting_land = this->_get_random_int_from_range(cost_of_planting_land_min, cost_of_planting_land_max);
-        this->price_of_selling_land = this->_get_random_int_from_range(price_of_selling_land_min, price_of_selling_land_max);
+        this->cost_of_planting_land = get_random_short_from_range(cost_of_planting_land_min, cost_of_planting_land_max);
+        this->price_of_selling_land = get_random_short_from_range(price_of_selling_land_min, price_of_selling_land_max);
     }
 
     void _sell_land_to_industry() {
@@ -185,7 +180,7 @@ private:
     
     void _distribute_money_to_countryman() {
         // процесс распределения денег по жителям
-        int money_to_distribute = 0;
+        int money_to_distribute = 50000;
         while (true) {
             money_to_distribute = this->_request_int_value("Сколько роллодов вы отдадите своим жителям? ");
             if (money_to_distribute < this->balance) {
@@ -200,7 +195,7 @@ private:
     
     void _plant_farm_land() {
         // процесс засева сельхоз земель
-        short square_to_plant = 0;
+        short square_to_plant = 1000;
         while (true) {
             square_to_plant = this->_request_int_value("Сколько квадратных миль земли вы хотите засеять? ");
             if (square_to_plant > this->_get_farm_land_square()) {
@@ -281,6 +276,7 @@ private:
             this->balance -= funeral_cost;  // вычитание из казны
             if (this->balance < 0) {
                 std::cout << "В казне не хватает денег на похороны, придется продать часть земли" << std::endl;
+                std::cout << "total land " << this->total_land << " balance " << this->balance << " price_of_selling_land " << this->price_of_selling_land << " division " << this->balance / this->price_of_selling_land << std::endl;
                 this->total_land += this->balance / this->price_of_selling_land;    // компенсация отрицательного баланса за счет продажи земли
                 this->balance = 0;
             }
@@ -349,7 +345,7 @@ private:
     void _count_tourists() {
         // подсчет доходов с туристов
         
-        short koef_1 = static_cast<short>(this->settled * 22 + this->_get_random_float_from_zero_to_one() * 500);
+        short koef_1 = static_cast<short>(this->_get_settled() * 22 + this->_get_random_float_from_zero_to_one() * 500);
         short koef_2 = static_cast<short>(( this->initial_land - this->total_land) * 15);
         short revenue = 0;
         
@@ -450,6 +446,8 @@ public:
         this->read_config();
     }
     
+    int get_total_land() {return this->total_land;}
+    
     void print_header() {
         // вывести приветствие
         
@@ -457,7 +455,7 @@ public:
         std::cout << "Was ppublished in Basic Computer Games (1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.2.1\n\n\n" << std::endl;
+        std::cout << "Version 1.3.1\n\n\n" << std::endl;
     }
     
     void print_intro() {
@@ -468,6 +466,7 @@ public:
     void print_state() {
         // вывести состояние игры
         
+        std::cout << this->years << " год правления" << std::endl;
         std::cout << "В казне " << this->balance << " ролодов" << std::endl;
         std::cout << "В стране проживает " << this->countrymen << " жителей";
         if (this->foreigners > 0) {
@@ -484,8 +483,8 @@ public:
         
         this->years += 1;
         if (this->years == 1 && !this->custom_game) {
-            this->balance = this->_get_random_int_from_range(start_balance_min, start_balance_max);
-            this->countrymen = this->_get_random_int_from_range(start_contrymen_min, start_contrymen_max);
+            this->balance = get_random_short_from_range(start_balance_min, start_balance_max);
+            this->countrymen = get_random_short_from_range(start_contrymen_min, start_contrymen_max);
         };
         this->_set_prices_for_land();
         this->died_count = 0;
@@ -566,6 +565,12 @@ public:
         std::cout << "Хеш вашего результата:" << std::endl;
         std::cout << year_hash << "\n" << std::endl;
         
+        // если не хватило земли по итогам продажи для компенсации затрат на похороны:
+        if (this->total_land < 0) {
+            std::cout << "Закончилась земля" << std::endl;
+            return true;
+        }
+        
         // если слишком много погибших
         if (this->died_count > 200) {
             std::cout << this->died_count << MESSAGE_ABOUT_DIES;
@@ -604,15 +609,12 @@ public:
             std::cout << GAME_OVER_SUCCESS;
             return true;
         }
-        
-        // старт следующего года
-        this->init_new_year();
+
         return false;
     }
     
     void process_random_evet() {
         short event_type = get_random_choise(3, 10);
-//        std::cout << "Выпало случайно событие типа " << event_type << std::endl;
         // 1 - позитивное, 2 - негативное, 3 - викторина
         if (event_type == 1) {
             this->_process_good_random_event();
@@ -654,13 +656,13 @@ int main(int argc, const char * argv[]) {
         game.init_new_year();
         game.print_state();
         game.get_gamer_decisions();
-        
+
         // ежемесячные случайные события
         for (size_t i = 0; i < 12; ++i) {
             std::cout << "...идет месяц " << i + 1 << std::endl;
             game.process_random_evet();
         }
-        
+
         game.process_year();
         bool is_game_over = game.get_year_results();
 //        game.print_state();

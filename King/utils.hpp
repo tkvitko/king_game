@@ -10,4 +10,5 @@
 
 #include <stdio.h>
 short get_random_choise(short choises_number, short probability);
+int get_random_short_from_range(const int min_value, const int max_value);
 #endif /* utils_hpp */
