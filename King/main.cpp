@@ -180,7 +180,7 @@ private:
     
     void _distribute_money_to_countryman() {
         // процесс распределения денег по жителям
-        int money_to_distribute = 50000;
+        int money_to_distribute = 0;
         while (true) {
             money_to_distribute = this->_request_int_value("Сколько роллодов вы отдадите своим жителям? ");
             if (money_to_distribute < this->balance) {
@@ -195,7 +195,7 @@ private:
     
     void _plant_farm_land() {
         // процесс засева сельхоз земель
-        short square_to_plant = 1000;
+        short square_to_plant = 0;
         while (true) {
             square_to_plant = this->_request_int_value("Сколько квадратных миль земли вы хотите засеять? ");
             if (square_to_plant > this->_get_farm_land_square()) {
