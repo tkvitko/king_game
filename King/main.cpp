@@ -13,6 +13,7 @@
 #include "utils.hpp"
 #include "strings.hpp"
 #include "constants.h"
+#include "events.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -82,6 +83,7 @@ private:
     int cost_of_planting_land = 0;       // стоимость засева земли
     int price_of_selling_land = 0;       // цена продажи земли
     int imcome_from_tourism = 0;         // доход от туризма
+    int tourism_multiplying_factor = 0;  // повышающий коээфициент для дохода с туризма
     
     // решения текущего года
     int sold_square = 0;
@@ -358,6 +360,11 @@ private:
         if (koef_1 > koef_2) {
             revenue = koef_1 - koef_2;
         }
+        
+        if (this->tourism_multiplying_factor != 0) {
+            revenue *= this->tourism_multiplying_factor;
+        }
+        
         std::cout << "Вы заработали " << revenue << " роллодов на туристах" << std::endl;
         if (koef_2 != 0 && !(koef_1 - koef_2 >= this->last_year_tourists_revenue)) {
             std::cout << "Поток туристов уменьшился, потому что ";
@@ -377,73 +384,48 @@ private:
         }
         this->last_year_tourists_revenue = abs(koef_1 - koef_2);
         this->balance += revenue;
+        this->tourism_multiplying_factor = 0;
+    }
+    
+    void _process_event(Event event) {
+        std::cout << event.text;
+        this->balance += event.change_balance;
+        this->balance += event.change_balance_by_koef_per_countryman * this->countrymen;
+        this->countrymen += event.change_countryman;
+        this->countrymen += event.change_countryman_by_koef_per_countrymen * this->countrymen;
+        this->tourism_multiplying_factor = event.change_revenue_from_tourism_percentage;
     }
     
     void _process_good_random_event() {
-        //TODO
+        Event event = events.get_random_event(EventType::good);
+        this->_process_event(event);
     }
     
     void _process_bad_random_event() {
-        short event_number = get_random_choise(5, 20);
-        if (event_number == 1) {
-            std::cout << BAD_EVENT_1_TEXT_1 << BAD_EVENT_1_AMOUNT_1 << BAD_EVENT_1_TEXT_2 << BAD_EVENT_1_AMOUNT_2 << std::endl;
-            this->balance -= (BAD_EVENT_1_AMOUNT_1 + BAD_EVENT_1_AMOUNT_2);
-        } else if (event_number == 2) {
-            std::cout << BAD_EVENT_2_TEXT_1 << BAD_EVENT_2_AMOUNT << BAD_EVENT_2_TEXT_2 << std::endl;
-            this->balance -= BAD_EVENT_2_AMOUNT;
-        } else if (event_number == 3) {
-            std::cout << BAD_EVENT_3_TEXT_1 << BAD_EVENT_3_AMOUNT << BAD_EVENT_3_TEXT_2 << std::endl;
-            this->balance -= BAD_EVENT_3_AMOUNT;
-        } else if (event_number == 4) {
-            std::cout << BAD_EVENT_4_TEXT_1 << BAD_EVENT_4_AMOUNT << BAD_EVENT_4_TEXT_2 << std::endl;
-            this->balance -= BAD_EVENT_4_AMOUNT;
-        } else if (event_number == 5) {
-            std::cout << BAD_EVENT_5_TEXT_1 << BAD_EVENT_5_AMOUNT_PER_COUNTRYMAN << BAD_EVENT_5_TEXT_2 << std::endl;
-            this->balance -= BAD_EVENT_5_AMOUNT_PER_COUNTRYMAN * this->countrymen;
-        }
-        event_number = 0;
+        Event event = events.get_random_event(EventType::bad);
+        this->_process_event(event);
     }
     
-    void _play_quiz(std::string question, std::string neutral_answer,
-                   std::string good_text_1, std::string good_text_2, int good_amount,
-                   std::string bad_text_1, std::string bad_text_2, int bad_amount,
-                    int died_countryman_percent) {
-        std::string desicion = "";
-        std::cout << question << std::endl;
-        std::cin >> desicion;
-        if (desicion == "1") {
-            std::cout << neutral_answer;
+    void _play_quiz(Quiz quize) {
+        std::string decision = "";
+        std::cout << quize.question << std::endl;
+        std::cin >> decision;
+        if (decision == "1") {
+            std::cout << quize.neutral_answer;
         } else {
             short event_type = get_random_choise(2, 50);
             if (event_type == 1) {
-                // удача
-                std::cout << good_text_1 << good_amount << good_text_2 << std::endl;
-                this->balance += good_amount;
+                this->_process_event(quize.good_event);
             } else {
-                // неудача
-                std::cout << bad_text_1 << bad_amount << bad_text_2 << std::endl;
-                this->balance -= bad_amount;
-                this->countrymen *= (100 - died_countryman_percent) / 100;
+                this->_process_event(quize.bad_event);
             }
             event_type = 0;
         }
     }
     
     void _process_quiz() {
-        short event_number = get_random_choise(3, 33);
-        if (event_number == 1) {
-            this->_play_quiz(QUIZ_1_QUESTION, QUIZ_1_NEUTRAL_TEXT,
-                             QUIZ_1_GOOD_TEXT_1, QUIZ_1_GOOD_TEXT_2, QUIZ_1_GOOD_AMOUNT,
-                             QUIZ_1_BAD_TEXT_1, QUIZ_1_BAD_TEXT_2, QUIZ_1_BAD_AMOUNT, 0);
-        } else if (event_number == 2) {
-            this->_play_quiz(QUIZ_2_QUESTION, QUIZ_2_NEUTRAL_TEXT,
-                             QUIZ_2_GOOD_TEXT_1, QUIZ_2_GOOD_TEXT_2, QUIZ_2_GOOD_AMOUNT,
-                             QUIZ_2_BAD_TEXT_1, QUIZ_2_BAD_TEXT_2, QUIZ_2_BAD_AMOUNT, 0);
-        } else if (event_number == 3) {
-            this->_play_quiz(QUIZ_3_QUESTION, QUIZ_3_NEUTRAL_TEXT,
-                             QUIZ_3_GOOD_TEXT_1, QUIZ_3_GOOD_TEXT_2, QUIZ_3_GOOD_AMOUNT,
-                             QUIZ_3_BAD_TEXT_1, QUIZ_3_BAD_TEXT_2, QUIZ_3_BAD_AMOUNT, 5);
-        }
+        Quiz quiz = this->quizes.get_random_quiz();
+        this->_play_quiz(quiz);
     }
     
 public:
@@ -451,6 +433,9 @@ public:
     GameState() {
         this->read_config();
     }
+    
+    Events events = Events();
+    Quizes quizes = Quizes();
     
     void print_header() {
         // вывести приветствие
@@ -619,6 +604,7 @@ public:
     
     void process_random_evet() {
         short event_type = get_random_choise(3, 10);
+//        std::cout << "DEBUG random event " << event_type << std::endl;
         // 1 - позитивное, 2 - негативное, 3 - викторина
         if (event_type == 1) {
             this->_process_good_random_event();
@@ -642,6 +628,7 @@ int main(int argc, const char * argv[]) {
     GameState game = GameState();
     game.print_header();
 
+    // показывать ли инструкцию
     std::string show_intro = "";
     std::cout << QUESTION_ABOUT_INTRO;
     std::cin >> show_intro;
@@ -649,11 +636,21 @@ int main(int argc, const char * argv[]) {
         game.print_intro();
     }
 
+    // игра с нуля или вводим стартовые значения
     std::string resume = "";
     std::cout << QUESTION_ABOUT_GAME_MODE;
     std::cin >> resume;
     if (resume == "2") {
         game.get_resume_data();
+    }
+
+    // игра со случайными событиями или без
+    bool random_events_enabled = false;
+    std::string game_with_random_events = "";
+    std::cout << QUESTION_ABOUT_RANDOM_EVENTS;
+    std::cin >> game_with_random_events;
+    if (game_with_random_events == "1") {
+        random_events_enabled = true;
     }
 
     while (true) {
@@ -662,10 +659,12 @@ int main(int argc, const char * argv[]) {
         game.get_gamer_decisions();
 
         // ежемесячные случайные события
-//        for (size_t i = 0; i < 12; ++i) {
-//            std::cout << "...идет месяц " << i + 1 << std::endl;
-//            game.process_random_evet();
-//        }
+        if (random_events_enabled) {
+            for (size_t i = 0; i < 12; ++i) {
+                std::cout << "...идет месяц " << i + 1 << std::endl;
+                game.process_random_evet();
+            }
+        }
 
         game.process_year();
         bool is_game_over = game.get_year_results();
