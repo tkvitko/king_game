@@ -170,6 +170,7 @@ private:
                 std::cout << "Подумайте ещё раз. У вас есть всего " << this->farm_land << " квадратных миль сельскохозяйственной земли." << std::endl;
             }
         };
+        this->farm_land -= square_to_sell;
         this->_add_money(this->price_of_selling_land * square_to_sell);
         this->sold_square = square_to_sell;
     }
@@ -234,14 +235,17 @@ private:
                 break;
             };
         }
-        this->forest_land -= cut_down_square;
-        this->farm_land += cut_down_square;
-        this->_add_money(price_for_cutting_down_forest * cut_down_square);
-        short deaths_when_cutting = get_random_choise(1, 5);
-        if (deaths_when_cutting == 1) {
-            int dead_count = this->countrymen * 0.1;
-            this->countrymen -= dead_count;
-            std::cout << "Случилось несчатье при рубке! " << dead_count << " жителей завалило деревьями." << std::endl;
+        
+        if (cut_down_square != 0) {
+            this->forest_land -= cut_down_square;
+            this->farm_land += cut_down_square;
+            this->_spend_money(price_for_cutting_down_forest * cut_down_square);
+            short deaths_when_cutting = get_random_choise(1, 100);
+            if (deaths_when_cutting == 1) {
+                int dead_count = this->countrymen * 0.1;
+                this->countrymen -= dead_count;
+                std::cout << "Случилось несчатье при рубке! " << dead_count << " жителей завалило деревьями." << std::endl;
+            }
         }
     }
     
@@ -252,6 +256,9 @@ private:
         short starved = this->countrymen - this->distributed_money / this->cost_of_living;
         if (starved > 0) {
             std::cout << starved << " жителей умерло от голода" << std::endl;
+        } else {
+            // если жиетелей по какой-то причине стало меньше, чем было в начале года, starved будет отрицательным
+            starved = 0;
         };
         
         // погибшие от загрязнений
