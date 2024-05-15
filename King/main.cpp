@@ -95,6 +95,9 @@ private:
     short last_year_lost_farm_land = 0;     // потери урожая
     int last_year_tourists_revenue = 0;   // заработок на туристах
     
+    // экономика следующего года
+    int next_year_countrymen = 0;   // изменение населения в следующего году
+    
     short _get_settled() {
         return this->countrymen - this->population_change; // оседлые жители
     }
@@ -538,6 +541,10 @@ public:
         this->_count_people();
         this->_count_harvest();
         this->_count_tourists();
+        
+        // применить изменение населения на следующий год
+        this->countrymen += this->next_year_countrymen;
+        this->next_year_countrymen = 0;
     }
     
     bool get_year_results() {
