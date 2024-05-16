@@ -444,11 +444,11 @@ public:
     void print_header() {
         // вывести приветствие
         
-        std::cout << "KING" << std::endl;
+        std::cout << "Срочно нужен премьер-министр!" << std::endl;
         std::cout << "Was ppublished in Basic Computer Games (1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.3.1\n\n\n" << std::endl;
+        std::cout << "Version 1.4.0\n\n\n" << std::endl;
     }
     
     void print_intro() {
