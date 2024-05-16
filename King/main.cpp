@@ -83,7 +83,8 @@ private:
     int cost_of_planting_land = 0;       // стоимость засева земли
     int price_of_selling_land = 0;       // цена продажи земли
     int imcome_from_tourism = 0;         // доход от туризма
-    int tourism_multiplying_factor = 0;  // повышающий коээфициент для дохода с туризма
+    int tourism_multiplying_factor = 1;  // повышающий коээфициент для дохода с туризма
+    double harvest_multiplying_factor = 1;  // повышающий коээфициент для дохода с урожая
     
     // решения текущего года
     int sold_square = 0;
@@ -364,9 +365,7 @@ private:
             revenue = koef_1 - koef_2;
         }
         
-        if (this->tourism_multiplying_factor != 0) {
-            revenue *= this->tourism_multiplying_factor;
-        }
+        revenue *= this->tourism_multiplying_factor;
         
         std::cout << "Вы заработали " << revenue << " роллодов на туристах" << std::endl;
         if (koef_2 != 0 && !(koef_1 - koef_2 >= this->last_year_tourists_revenue)) {
@@ -387,7 +386,7 @@ private:
         }
         this->last_year_tourists_revenue = abs(koef_1 - koef_2);
         this->balance += revenue;
-        this->tourism_multiplying_factor = 0;
+        this->tourism_multiplying_factor = 1;
     }
     
     void _process_event(Event event) {
@@ -395,8 +394,10 @@ private:
         this->balance += event.change_balance;
         this->balance += event.change_balance_by_koef_per_countryman * this->countrymen;
         this->countrymen += event.change_countryman;
-        this->countrymen += event.change_countryman_by_koef_per_countrymen * this->countrymen;
+        this->countrymen += event.change_countryman_by_koef_per_countrymen * this->countrymen / 100;
+        this->next_year_countrymen += event.change_countryman_next_year;
         this->tourism_multiplying_factor = event.change_revenue_from_tourism_percentage;
+        this->harvest_multiplying_factor = event.change_harvest_by_koef;
     }
     
     void _process_good_random_event() {
