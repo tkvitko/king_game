@@ -7,6 +7,8 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <random>
 
 enum class EventType {
     good,
@@ -175,6 +177,10 @@ public:
                            "Дальновидно. Консервативно настроенные граждане могут не одобрить такой инновации. Лошадки понадёжнее будут.\n",
                            good_event_7, bad_event_7);
         this->quizes.push_back(quiz_7);
+        
+        auto rd = std::random_device {};
+        auto rng = std::default_random_engine { rd() };
+        std::shuffle(std::begin(this->quizes), std::end(this->quizes), rng);
     }
     
     Quiz get_random_quiz() {
@@ -281,6 +287,11 @@ public:
         std::vector<std::pair<changing_fields, int>> bad_params_10 = {std::pair<changing_fields, int>(changing_fields::balance, -10000)};
         Event bad_event_10 = Event("На одно из ваших полей упал метеорит. Жертв и разрушений нет. Однако, мы терпим убытки, поскольку  жители вместо того, чтобы работать, глазеют на воронку. Кроме того, несколько несознательных граждан получили увечья, вступив в драку за обладание осколками небесного тела.\n", bad_params_10);
         this->bad_events.push_back(bad_event_10);
+        
+        auto rd = std::random_device {};
+        auto rng = std::default_random_engine { rd() };
+        std::shuffle(std::begin(this->good_events), std::end(this->good_events), rng);
+        std::shuffle(std::begin(this->bad_events), std::end(this->bad_events), rng);
     }
     
     Event get_random_event(EventType event_type) {
