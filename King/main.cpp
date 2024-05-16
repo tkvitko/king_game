@@ -448,7 +448,7 @@ public:
         std::cout << "Was ppublished in Basic Computer Games (1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.4.0\n\n\n" << std::endl;
+        std::cout << "Version 1.5.0\n\n\n" << std::endl;
     }
     
     void print_intro() {
