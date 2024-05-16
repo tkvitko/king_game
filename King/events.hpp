@@ -19,8 +19,9 @@ enum class changing_fields {
     countryman,
     countryman_next_year,
     countryman_by_koef_per_countrymen,
-    revenue_from_tourism_percentage,
-    harvest_by_koef,
+    
+    tourism_percentage,
+    harvest_percentage,
     cost_of_life_percentage
 };
 
@@ -31,10 +32,11 @@ public:
     int change_balance = 0;
     int change_countryman = 0;
     int change_countryman_next_year = 0;
-    int change_revenue_from_tourism_percentage = 0;
     int change_balance_by_koef_per_countryman = 0;
     int change_countryman_by_koef_per_countrymen = 0;
-    int change_harvest_by_koef = 0;
+    
+    int change_tourism_percentage = 0;
+    int change_harvest_percentage = 0;
     int change_cost_of_life_percentage = 0;
     
     Event() {};
@@ -52,8 +54,8 @@ public:
                 case changing_fields::countryman:
                     change_countryman = value;
                     break;
-                case changing_fields::revenue_from_tourism_percentage:
-                    change_revenue_from_tourism_percentage = value;
+                case changing_fields::tourism_percentage:
+                    change_tourism_percentage = value;
                     break;
                 case changing_fields::balance_by_koef_per_countryman:
                     change_balance_by_koef_per_countryman = value;
@@ -67,23 +69,12 @@ public:
                 case changing_fields::cost_of_life_percentage:
                     change_cost_of_life_percentage = value;
                     break;
-            }
-        }
-    };
-    
-    Event(std::string text_, std::vector<std::pair<changing_fields, double>> params) {
-        for (auto& param : params) {
-            changing_fields field = param.first;
-            int value = param.second;
-            
-            switch (field) {
-                case changing_fields::harvest_by_koef:
-                    change_harvest_by_koef = value;
+                case changing_fields::harvest_percentage:
+                    change_harvest_percentage = value;
                     break;
             }
         }
-    };
-    
+    }
 };
 
 class Quiz {
@@ -164,17 +155,17 @@ public:
                            good_event_5, bad_event_5);
         this->quizes.push_back(quiz_5);
         
-        std::vector<std::pair<changing_fields, double>> good_params_6 = {std::pair<changing_fields, double>(changing_fields::harvest_by_koef, 2.0)};
+        std::vector<std::pair<changing_fields, int>> good_params_6 = {std::pair<changing_fields, int>(changing_fields::harvest_percentage, 100)};
         Event good_event_6 = Event("Хорошие новости! Согласно анализу почвы, новое удобрение сработало. Говорить о результатах пока, конечно, рано, но, по словам специалистов, в будущем году можно ожидать двукратного прироста урожая.", good_params_6);
         
-        std::vector<std::pair<changing_fields, double>> bad_params_6 = {std::pair<changing_fields, double>(changing_fields::harvest_by_koef, 0.5)};
+        std::vector<std::pair<changing_fields, int>> bad_params_6 = {std::pair<changing_fields, int>(changing_fields::harvest_percentage, -50)};
         Event bad_event_6 = Event("Эти горе-учёные опять что-то напутали. По словам приглашённых независимых специалистов, плодородность почвы упала в 2 раза, так что в ближайший год нас ждёт неурожай.", bad_params_6);
         Quiz quiz_6 = Quiz("Учёный совет просит разрешить проведение испытаний нового удобрения. Откажете (1) или разрешите (2)?\n",
                            "Правильно! Всё зло от химии!\n",
                            good_event_6, bad_event_6);
         this->quizes.push_back(quiz_6);
         
-        std::vector<std::pair<changing_fields, double>> good_params_7 = {std::pair<changing_fields, double>(changing_fields::cost_of_life_percentage, -25)};
+        std::vector<std::pair<changing_fields, int>> good_params_7 = {std::pair<changing_fields, int>(changing_fields::cost_of_life_percentage, -25)};
         Event good_event_7 = Event("Поздравляю, господин премьер-министр! Испытательные прогоны увенчались полным успехом, а регулярные рейсы начнутся с будущего года.", good_params_7);
         
         std::vector<std::pair<changing_fields, int>> bad_params_7 = {std::pair<changing_fields, int>(changing_fields::balance, -20000)};
@@ -190,7 +181,9 @@ public:
             int quizes_count = static_cast<int>(this->quizes.size());
             int prob = 100 / quizes_count;
             int choise = get_random_choise(quizes_count, prob);
-            return this->quizes[choise];
+            Quiz choosen = this->quizes[choise];
+            this->quizes.erase(this->quizes.begin() + choise);
+            return choosen;
     }
 };
 
@@ -212,15 +205,15 @@ public:
         Event event_2 = Event("Всемирный Банк развития выделил вашей стране кредит на сумму 60000 ролодов. Правда, под 150% годовых. Но учитывая срок в 16 лет и выплату в конце срока, это уже не ваши проблемы. Правда, о третьем президентском сроке лучше забыть.\n", good_params_2);
         this->good_events.push_back(event_2);
         
-        std::vector<std::pair<changing_fields, int>> good_params_3 = {std::pair<changing_fields, int>(changing_fields::countryman_next_year, 300)};
-        Event event_3 = Event("У наших берегов потерпел крушение корабль. К счастью, большая часть пассажиров и членов экипажа выжила, так что население острова пополнилось ещё на 300 голодных ртов.\n", good_params_3);
+        std::vector<std::pair<changing_fields, int>> good_params_3 = {std::pair<changing_fields, int>(changing_fields::countryman_next_year, 50)};
+        Event event_3 = Event("У наших берегов потерпел крушение корабль. К счастью, большая часть пассажиров и членов экипажа выжила, так что население острова пополнилось ещё на 50 голодных ртов.\n", good_params_3);
         this->good_events.push_back(event_3);
         
         std::vector<std::pair<changing_fields, int>> good_params_4 = {std::pair<changing_fields, int>(changing_fields::balance, 10000)};
         Event event_4 = Event("На острове потерпел крушение воздушный шар. Поисковая группа уже обнаружила его в одном из лесов. К сожалению, никому из пассажиров и членов экипажа выжить не удалось. Предположительно, шар принадлежит одному из крупных промышленников, но поскольку шар сохранился плохо и однозначно опознан быть не может, мы не сочли возможным сообщать этому человеку  о находке, чтобы ненароком не расстроить. Размер добычи, то есть, я хотел сказать, общая стоимость найденного  имущества составила 10000 ролодов.\n", good_params_4);
         this->good_events.push_back(event_4);
         
-        std::vector<std::pair<changing_fields, int>> good_params_5 = {std::pair<changing_fields, int>(changing_fields::revenue_from_tourism_percentage, 50)};
+        std::vector<std::pair<changing_fields, int>> good_params_5 = {std::pair<changing_fields, int>(changing_fields::tourism_percentage, 50)};
         Event event_5 = Event("Известный блогер-путешественник выпустил серию видеороликов о нашем острове. Из-за повышения интереса со стороны приезжих, доход от туризма в следующем году вырастет на 50%. Полагаю, уже можно выпускать этого бедолагу из подвала.\n", good_params_5);
         this->good_events.push_back(event_5);
         
@@ -232,7 +225,7 @@ public:
         Event event_7 = Event("Наш живописный остров использовали в качестве декорации для сьёмок фильма о дикарях-каннибаллах. Правда, к  широкому прокату его не допустили из-за обилия жестоких и вульгарных сцен. Но как бы то ни было, за разрешение на съёмки киношники заплатили 20000 ролодов.\n", good_params_7);
         this->good_events.push_back(event_7);
         
-        std::vector<std::pair<changing_fields, int>> good_params_8 = {std::pair<changing_fields, int>(changing_fields::revenue_from_tourism_percentage, 25)};
+        std::vector<std::pair<changing_fields, int>> good_params_8 = {std::pair<changing_fields, int>(changing_fields::tourism_percentage, 25)};
         Event event_8 = Event("Завершилась реставрация одного из лесных заповедников, начатая ещё 20 лет назад вашим предшественником. Из-за всплеска интереса со стороны любителей экзотических животных, В будущем году мы ожидаем увеличения дохода от туризма на 25%. Полагаю, животные тоже будут рады, разнообразить рацион- это всегда полезно.\n",
                               good_params_8);
         this->good_events.push_back(event_8);
@@ -295,12 +288,16 @@ public:
             int events_count = static_cast<int>(this->good_events.size());
             int prob = 100 / events_count;
             int choise = get_random_choise(events_count, prob);
-            return this->good_events[choise];
+            Event choosen = this->good_events[choise];
+            this->good_events.erase(this->good_events.begin() + choise);
+            return choosen;
         } else { // if (event_type == EventType::bad) {
             int events_count = static_cast<int>(this->bad_events.size());
             int prob = 100 / events_count;
             int choise = get_random_choise(events_count, prob);
-            return this->bad_events[choise];
+            Event choosen =  this->bad_events[choise];
+            this->bad_events.erase(this->bad_events.begin() + choise);
+            return choosen;
         }
     }
 };

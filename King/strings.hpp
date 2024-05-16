@@ -11,7 +11,7 @@
 #include <string>
 #include <stdio.h>
 
-const std::string QUESTION_ABOUT_INTRO = "Показать инструкцию? (y/n) ";
+const std::string QUESTION_ABOUT_INTRO = "Показать инструкцию (1) или не стоит (2)? ";
 const std::string QUESTION_ABOUT_GAME_MODE = "Хотите сыграть обычную игру (1) или настроить вручную стартовые параметры (2)? ";
 const std::string QUESTION_ABOUT_RANDOM_EVENTS = "Хотите играть со случайными событиями (1) или без них (2)? ";
 

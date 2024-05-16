@@ -83,8 +83,8 @@ private:
     int cost_of_planting_land = 0;       // стоимость засева земли
     int price_of_selling_land = 0;       // цена продажи земли
     int imcome_from_tourism = 0;         // доход от туризма
-    int tourism_multiplying_factor = 1;  // повышающий коээфициент для дохода с туризма
-    double harvest_multiplying_factor = 1;  // повышающий коээфициент для дохода с урожая
+    double tourism_multiplying_factor = 1.0;  // повышающий коээфициент для дохода с туризма
+    double harvest_multiplying_factor = 1.0;  // повышающий коээфициент для дохода с урожая
     
     // решения текущего года
     int sold_square = 0;
@@ -97,7 +97,8 @@ private:
     int last_year_tourists_revenue = 0;   // заработок на туристах
     
     // экономика следующего года
-    int next_year_countrymen = 0;   // изменение населения в следующего году
+    int next_year_countrymen = 0;   // изменение населения в следующем году
+    double next_year_cost_of_life_multiplying_factor = 1.0;  // изменение стоимости жизни в следующем году
     
     short _get_settled() {
         return this->countrymen - this->population_change; // оседлые жители
@@ -286,7 +287,7 @@ private:
             this->balance -= funeral_cost;  // вычитание из казны
             if (this->balance < 0) {
                 std::cout << "В казне не хватает денег на похороны, придется продать часть земли" << std::endl;
-                std::cout << "farm land " << this->farm_land << " balance " << this->balance << " price_of_selling_land " << this->price_of_selling_land << " division " << this->balance / this->price_of_selling_land << std::endl;
+//                std::cout << "farm land " << this->farm_land << " balance " << this->balance << " price_of_selling_land " << this->price_of_selling_land << " division " << this->balance / this->price_of_selling_land << std::endl;
                 // компенсация отрицательного баланса за счет продажи земли
                 // подозрительный момент, т.к. по сути земля продается промшленности, но эта продажа уже нигде не учитывается в вопросах, связанных с промышленностью
                 this->farm_land += this->balance / this->price_of_selling_land;
@@ -386,7 +387,7 @@ private:
         }
         this->last_year_tourists_revenue = abs(koef_1 - koef_2);
         this->balance += revenue;
-        this->tourism_multiplying_factor = 1;
+        this->tourism_multiplying_factor = 1.0;
     }
     
     void _process_event(Event event) {
@@ -396,8 +397,10 @@ private:
         this->countrymen += event.change_countryman;
         this->countrymen += event.change_countryman_by_koef_per_countrymen * this->countrymen / 100;
         this->next_year_countrymen += event.change_countryman_next_year;
-        this->tourism_multiplying_factor = event.change_revenue_from_tourism_percentage;
-        this->harvest_multiplying_factor = event.change_harvest_by_koef;
+        
+        this->tourism_multiplying_factor += static_cast<double>(event.change_tourism_percentage) / 100;
+        this->harvest_multiplying_factor += static_cast<double>(event.change_harvest_percentage) / 100;
+        this->next_year_cost_of_life_multiplying_factor += static_cast<double>(event.change_cost_of_life_percentage) / 100;
     }
     
     void _process_good_random_event() {
@@ -445,7 +448,7 @@ public:
         // вывести приветствие
         
         std::cout << "Срочно нужен премьер-министр!" << std::endl;
-        std::cout << "Was ppublished in Basic Computer Games (1978)" << std::endl;
+        std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
         std::cout << "Version 1.5.0\n\n\n" << std::endl;
@@ -546,6 +549,9 @@ public:
         // применить изменение населения на следующий год
         this->countrymen += this->next_year_countrymen;
         this->next_year_countrymen = 0;
+        
+        this->cost_of_living *= this->next_year_cost_of_life_multiplying_factor;
+        this->next_year_cost_of_life_multiplying_factor = 1.0;
     }
     
     bool get_year_results() {
@@ -640,7 +646,7 @@ int main(int argc, const char * argv[]) {
     std::string show_intro = "";
     std::cout << QUESTION_ABOUT_INTRO;
     std::cin >> show_intro;
-    if (show_intro == "y") {
+    if (show_intro == "1") {
         game.print_intro();
     }
 
