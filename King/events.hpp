@@ -288,7 +288,7 @@ public:
         this->bad_events.push_back(bad_event_8);
         
         std::vector<std::pair<changing_fields, int>> bad_params_9 = {std::pair<changing_fields, int>(changing_fields::balance, -10000)};
-        bad_params_9.push_back(std::pair<changing_fields, int>(changing_fields::countryman, 30));
+        bad_params_9.push_back(std::pair<changing_fields, int>(changing_fields::countryman, -30));
         Event bad_event_9 = Event("При проведении горных работ во время строительства новой шахты рабочие докопались до древнего чудовища. Реликтовый монстр не оценил дружелюбия наших граждан, ну или просто успел за столько лет беспробудного сна проголодаться. В результате неудачного контакта мы потеряли 30 рабочих и несколько едениц тяжёлой техники общей стоимостью 10000 ролодов. Местонахождение монстра в данный момент неизвестно.\n", bad_params_9);
         this->bad_events.push_back(bad_event_9);
         

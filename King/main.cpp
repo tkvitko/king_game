@@ -422,7 +422,7 @@ private:
         this->harvest_multiplying_factor += static_cast<double>(event.change_harvest_percentage) / 100;
         this->next_year_cost_of_life_multiplying_factor += static_cast<double>(event.change_cost_of_life_percentage) / 100;
         
-        std::cout << "После этого события:" << "\nКазна: " << this->balance << "\nНаселение: " << this->countrymen << "\nКоэффициент турзима в следующем году: " << this->tourism_multiplying_factor << "\nКоэффициент урожая в следущем году: " << this->harvest_multiplying_factor << "\nКоэффициент стоимости жизни в следующем году: " << this->next_year_cost_of_life_multiplying_factor << "\nИзменение населения в следующем году: " << this->next_year_countrymen << std::endl;
+        std::cout << "После этого события:" << "\nКазна: " << this->balance << "\nНаселение: " << this->countrymen << "\nКоэффициент туризма в следующем году: " << this->tourism_multiplying_factor << "\nКоэффициент урожая в следующем году: " << this->harvest_multiplying_factor << "\nКоэффициент стоимости жизни в следующем году: " << this->next_year_cost_of_life_multiplying_factor << "\nИзменение населения в следующем году: " << this->next_year_countrymen << std::endl;
         
     }
     
@@ -473,7 +473,7 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.2\n\n\n" << std::endl;
+        std::cout << "Version 1.6.3\n\n\n" << std::endl;
     }
     
     void print_intro() {
