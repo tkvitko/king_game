@@ -366,7 +366,7 @@ private:
         }
         
         // учет дохода с урожая
-        int revenue = static_cast<int>((this->planted_square - lost_farm_land) * this->price_of_selling_land / 2);
+        int revenue = static_cast<int>(harvested * this->price_of_selling_land / 2);
         if (revenue < 0) { revenue = 0; }
         this->balance += revenue;
         std::cout << "Вы заработали на урожае " << revenue << " роллодов" << std::endl;
@@ -470,7 +470,7 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.0\n\n\n" << std::endl;
+        std::cout << "Version 1.6.1\n\n\n" << std::endl;
     }
     
     void print_intro() {
