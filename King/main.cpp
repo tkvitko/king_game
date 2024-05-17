@@ -473,7 +473,7 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.1\n\n\n" << std::endl;
+        std::cout << "Version 1.6.2\n\n\n" << std::endl;
     }
     
     void print_intro() {
