@@ -54,3 +54,50 @@ int get_random_short_from_range(const int min_value, const int max_value) {
     int result = std::rand() % range + 1;
     return min_value + result;
 }
+
+
+
+bool is_integer_str(const std::string& text) {
+
+    for (char symbol : text) {
+            if (!isdigit(symbol)) {
+                return false;
+            }
+        }
+    return true;
+}
+
+bool is_in_limits(int num, int min, int max) {
+    if (num < min || num > max) {
+        return false;
+    }
+    return true;
+}
+
+void show_tip(int min, int max) {
+    std::cout << "Введите число от " << min << " до " << max << std::endl;
+}
+
+int get_valid_integer_input(int min, int max, bool need_tip) {
+    
+    if (need_tip) {
+        show_tip(min, max);
+    }
+    
+    bool got = false;
+    while (!got) {
+        std::string text;
+        std::cin >> text;
+        if (is_integer_str(text)) {
+            int num = stoi(text);
+            if (is_in_limits(num, min, max)) {
+                return num;
+            } else {
+                show_tip(min, max);
+            }
+        } else {
+            show_tip(min, max);
+        }
+    };
+    return 0;
+}

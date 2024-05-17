@@ -146,13 +146,13 @@ private:
         return distribution(generator);
     }
     
-    int _request_int_value(const std::string question_text) {
-        // задает вопрос и считывает числовой ответ; возвращает его или -1, если ответ не числовой
-        int answer = -1;
-        std::cout << question_text << " ";
-        std::cin >> answer;
-        return answer;
-    }
+//    int _request_int_value(const std::string question_text) {
+//        // задает вопрос и считывает числовой ответ; возвращает его или -1, если ответ не числовой
+//        int answer = -1;
+//        std::cout << question_text << " ";
+//        std::cin >> answer;
+//        return answer;
+//    }
     
     long _add_money(int amount) {return this->balance += amount; }
     long _spend_money(const int amount) {
@@ -170,14 +170,18 @@ private:
     void _sell_land_to_industry() {
         // процесс продажи земли иностранной промышленности
         short square_to_sell = 0;
-        while (true) {
-            square_to_sell = this->_request_int_value("Сколько квадратных миль земли вы хотите продать под промышленность? ");
-            if (square_to_sell < this->farm_land) {
-                break;
-            } else {
-                std::cout << "Подумайте ещё раз. У вас есть всего " << this->farm_land << " квадратных миль сельскохозяйственной земли." << std::endl;
-            }
-        };
+//        while (true) {
+//            std::cout << "Сколько квадратных миль земли вы хотите продать под промышленность? ";
+//            square_to_sell = get_valid_integer_input(0, this->farm_land, false);
+//            if (square_to_sell < this->farm_land) {
+//                break;
+//            } else {
+//                std::cout << "Подумайте ещё раз. У вас есть всего " << this->farm_land << " квадратных миль сельскохозяйственной земли." << std::endl;
+//            }
+//        };
+        std::cout << "Сколько квадратных миль земли вы хотите продать под промышленность? ";
+        square_to_sell = get_valid_integer_input(0, this->farm_land, false);
+        
         this->farm_land -= square_to_sell;
         this->_add_money(this->price_of_selling_land * square_to_sell);
         this->sold_square = square_to_sell;
@@ -186,14 +190,18 @@ private:
     void _distribute_money_to_countryman() {
         // процесс распределения денег по жителям
         int money_to_distribute = 0;
-        while (true) {
-            money_to_distribute = this->_request_int_value("Сколько роллодов вы отдадите своим жителям? ");
-            if (money_to_distribute < this->balance) {
-                break;
-            } else {
-                std::cout << "Подумайте ещё раз. У вас есть всего " << this->balance << " роллодов в казне" << std::endl;
-            }
-        };
+//        while (true) {
+//            std::cout << "Сколько роллодов вы отдадите своим жителям? ";
+//            money_to_distribute = get_valid_integer_input(0, this->balance, false);
+//            if (money_to_distribute < this->balance) {
+//                break;
+//            } else {
+//                std::cout << "Подумайте ещё раз. У вас есть всего " << this->balance << " роллодов в казне" << std::endl;
+//            }
+//        };
+        std::cout << "Сколько роллодов вы отдадите своим жителям? ";
+        money_to_distribute = get_valid_integer_input(0, this->balance, false);
+        
         this->_spend_money(money_to_distribute);
         this->distributed_money = money_to_distribute;
     }
@@ -202,7 +210,8 @@ private:
         // процесс засева сельхоз земель
         short square_to_plant = 0;
         while (true) {
-            square_to_plant = this->_request_int_value("Сколько квадратных миль земли вы хотите засеять? ");
+            std::cout << "Сколько квадратных миль земли вы хотите засеять? ";
+            square_to_plant = get_valid_integer_input(0, this->farm_land, false);
             if (square_to_plant > this->farm_land) {
                 std::cout << "Увы, у вас есть только " << this->farm_land << " квадратных миль сельскохозяйственных земель" << std::endl;
             } else if (square_to_plant > this->countrymen * square_countryman_can_plant) {
@@ -220,14 +229,17 @@ private:
     void _pollution_control() {
         // процесс вкладывания денег в контроль загрязнений
         int money_for_pollution_control = 0;
-        while (true) {
-            money_for_pollution_control = this->_request_int_value("Сколько роллодов вы хотите потратить на контроль загрязнений? ");
-            if (money_for_pollution_control > this->balance) {
-                std::cout << "Подумайте еще раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
-            } else {
-                break;
-            };
-        }
+//        while (true) {
+//            std::cout << "Сколько роллодов вы хотите потратить на контроль загрязнений? ";
+//            money_for_pollution_control = get_valid_integer_input(0, this->balance, false);
+//            if (money_for_pollution_control > this->balance) {
+//                std::cout << "Подумайте еще раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
+//            } else {
+//                break;
+//            };
+//        }
+        std::cout << "Сколько роллодов вы хотите потратить на контроль загрязнений? ";
+        money_for_pollution_control = get_valid_integer_input(0, this->balance, false);
         this->_spend_money(money_for_pollution_control);
         this->money_spent_for_pollution_control = money_for_pollution_control;
     }
@@ -235,14 +247,17 @@ private:
     void _cut_down_forest() {
         // процесс вырубки леса
         int cut_down_square = 0;
-        while (true) {
-            cut_down_square = this->_request_int_value("Сколько квадратных миль леса вы хотите вырубить? ");
-            if (cut_down_square > this->forest_land) {
-                std::cout << "Подумайте еще раз. У вас осталось лишь " << this->forest_land << " квадртаных миль леса" << std::endl;
-            } else {
-                break;
-            };
-        }
+//        while (true) {
+//            std::cout << "Сколько квадратных миль леса вы хотите вырубить? ";
+//            cut_down_square = get_valid_integer_input(0, this->forest_land, false);
+//            if (cut_down_square > this->forest_land) {
+//                std::cout << "Подумайте еще раз. У вас осталось лишь " << this->forest_land << " квадртаных миль леса" << std::endl;
+//            } else {
+//                break;
+//            };
+//        }
+        std::cout << "Сколько квадратных миль леса вы хотите вырубить? ";
+        cut_down_square = get_valid_integer_input(0, this->forest_land, false);
         
         if (cut_down_square != 0) {
             this->forest_land -= cut_down_square;
@@ -409,10 +424,9 @@ private:
     }
     
     void _play_quiz(Quiz quize) {
-        std::string decision = "";
         std::cout << quize.question << std::endl;
-        std::cin >> decision;
-        if (decision == "1") {
+        int decision = get_valid_integer_input(1, 2, false);
+        if (decision == 1) {
             std::cout << quize.neutral_answer;
         } else {
             short event_type = get_random_choise(2, 50);
@@ -456,7 +470,7 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.5.2\n\n\n" << std::endl;
+        std::cout << "Version 1.6.0\n\n\n" << std::endl;
     }
     
     void print_intro() {
@@ -680,26 +694,23 @@ int main(int argc, const char * argv[]) {
     game.print_header();
 
     // показывать ли инструкцию
-    std::string show_intro = "";
     std::cout << QUESTION_ABOUT_INTRO;
-    std::cin >> show_intro;
-    if (show_intro == "1") {
+    int choise_intro = get_valid_integer_input(1, 2, false);
+    if (choise_intro == 1) {
         game.print_intro();
     }
 
     // игра с нуля или вводим стартовые значения
-    std::string resume = "";
     std::cout << QUESTION_ABOUT_GAME_MODE;
-    std::cin >> resume;
-    if (resume == "2") {
+    int choise_mode = get_valid_integer_input(1, 2, false);
+    if (choise_mode == 2) {
         game.get_resume_data();
     }
 
     // игра со случайными событиями или без
-    std::string game_with_random_events = "";
     std::cout << QUESTION_ABOUT_RANDOM_EVENTS;
-    std::cin >> game_with_random_events;
-    if (game_with_random_events == "1") {
+    int choise_random = get_valid_integer_input(1, 2, false);
+    if (choise_random == 1) {
         game.enable_random_events();
     }
 
