@@ -59,6 +59,7 @@ private:
     
     // режим
     bool custom_game = false;    // обычный режим игры без ввода стартовых данных пользователем
+    bool random_events_enabled = false; // игра без случайных ивентов
     
     // время
     unsigned short years = 0;  // лет правления
@@ -392,6 +393,7 @@ private:
     
     void _process_event(Event event) {
         std::cout << event.text;
+//        std::cin.get();
         this->balance += event.change_balance;
         this->balance += event.change_balance_by_koef_per_countryman * this->countrymen;
         this->countrymen += event.change_countryman;
@@ -401,16 +403,6 @@ private:
         this->tourism_multiplying_factor += static_cast<double>(event.change_tourism_percentage) / 100;
         this->harvest_multiplying_factor += static_cast<double>(event.change_harvest_percentage) / 100;
         this->next_year_cost_of_life_multiplying_factor += static_cast<double>(event.change_cost_of_life_percentage) / 100;
-    }
-    
-    void _process_good_random_event() {
-        Event event = events.get_random_event(EventType::good);
-        this->_process_event(event);
-    }
-    
-    void _process_bad_random_event() {
-        Event event = events.get_random_event(EventType::bad);
-        this->_process_event(event);
     }
     
     void _play_quiz(Quiz quize) {
@@ -430,10 +422,20 @@ private:
         }
     }
     
-    void _process_quiz() {
-        Quiz quiz = this->quizes.get_random_quiz();
-        this->_play_quiz(quiz);
-    }
+//    void _process_good_random_event() {
+//        Event event = events.get_random_event(EventType::good);
+//        this->_process_event(event);
+//    }
+    
+//    void _process_bad_random_event() {
+//        Event event = events.get_random_event(EventType::bad);
+//        this->_process_event(event);
+//    }
+    
+//    void _process_quiz() {
+//        Quiz quiz = this->quizes.get_random_quiz();
+//        this->_play_quiz(quiz);
+//    }
     
 public:
     
@@ -447,11 +449,11 @@ public:
     void print_header() {
         // вывести приветствие
         
-        std::cout << "Срочно нужен премьер-министр!" << std::endl;
+        std::cout << "\n### СРОЧНО НУЖЕН ПРЕМЬЕР-МИНИСТР! ###\n" << std::endl;
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.5.0\n\n\n" << std::endl;
+        std::cout << "Version 1.5.2\n\n\n" << std::endl;
     }
     
     void print_intro() {
@@ -484,6 +486,10 @@ public:
         };
         this->_set_prices_for_land();
         this->died_count = 0;
+    }
+    
+    void enable_random_events() {
+        this->random_events_enabled = true;
     }
     
     void init_speciphic_year(short years, int balance, int countrymen, int foreigners, int farm_land) {
@@ -539,6 +545,34 @@ public:
     }
     
     void process_year() {
+        
+        // ежемесячные случайные события
+        if (this->random_events_enabled) {
+            YearEvents year_events = YearEvents();
+            for (size_t i = 0; i < 12; ++i) {
+                std::cout << "...идет месяц " << i + 1 << std::endl;
+//                game.process_random_event();
+                monthType month_type = year_events.monthes[i];
+                
+                switch(month_type) {
+                    case monthType::GOOD:{
+                        Event event = this->events.pop_last_event(EventType::good);
+                        this->_process_event(event);}
+                        break;
+                    case monthType::BAD:{
+                        Event event = this->events.pop_last_event(EventType::bad);
+                        this->_process_event(event);}
+                        break;
+                    case monthType::QUIZ:{
+                        Quiz quiz = this->quizes.pop_last_quiz();
+                        this->_play_quiz(quiz);}
+                        break;
+                    case monthType::EMPTY:
+                        break;
+                }
+            }
+        }
+        
         // произвести вычисления
         
         this->_count_deaths();
@@ -616,19 +650,19 @@ public:
         return false;
     }
     
-    void process_random_evet() {
-        short event_type = get_random_choise(3, 10);
-//        std::cout << "DEBUG random event " << event_type << std::endl;
-        // 1 - позитивное, 2 - негативное, 3 - викторина
-        if (event_type == 1) {
-            this->_process_good_random_event();
-        } else if (event_type == 2) {
-            this->_process_bad_random_event();
-        } else if (event_type == 3) {
-            this->_process_quiz();
-        }
-        event_type = 0;
-    }
+//    void process_random_event() {
+//        short event_type = get_random_choise(3, 10);
+////        std::cout << "DEBUG random event " << event_type << std::endl;
+//        // 1 - позитивное, 2 - негативное, 3 - викторина
+//        if (event_type == 1) {
+//            this->_process_good_random_event();
+//        } else if (event_type == 2) {
+//            this->_process_bad_random_event();
+//        } else if (event_type == 3) {
+//            this->_process_quiz();
+//        }
+//        event_type = 0;
+//    }
 };
 
 int main(int argc, const char * argv[]) {
@@ -659,26 +693,17 @@ int main(int argc, const char * argv[]) {
     }
 
     // игра со случайными событиями или без
-    bool random_events_enabled = false;
     std::string game_with_random_events = "";
     std::cout << QUESTION_ABOUT_RANDOM_EVENTS;
     std::cin >> game_with_random_events;
     if (game_with_random_events == "1") {
-        random_events_enabled = true;
+        game.enable_random_events();
     }
 
     while (true) {
         game.init_new_year();
         game.print_state();
         game.get_gamer_decisions();
-
-        // ежемесячные случайные события
-        if (random_events_enabled) {
-            for (size_t i = 0; i < 12; ++i) {
-                std::cout << "...идет месяц " << i + 1 << std::endl;
-                game.process_random_evet();
-            }
-        }
 
         game.process_year();
         bool is_game_over = game.get_year_results();

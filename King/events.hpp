@@ -183,13 +183,21 @@ public:
         std::shuffle(std::begin(this->quizes), std::end(this->quizes), rng);
     }
     
-    Quiz get_random_quiz() {
-            int quizes_count = static_cast<int>(this->quizes.size());
-            int prob = 100 / quizes_count;
-            int choise = get_random_choise(quizes_count, prob);
-            Quiz choosen = this->quizes[choise];
-            this->quizes.erase(this->quizes.begin() + choise);
-            return choosen;
+//    Quiz get_random_quiz() {
+//            int quizes_count = static_cast<int>(this->quizes.size());
+//            int prob = 100 / quizes_count;
+//            int choise = get_random_choise(quizes_count, prob);
+//            Quiz choosen = this->quizes[choise];
+//            this->quizes.erase(this->quizes.begin() + choise);
+//            return choosen;
+//    }
+    
+    Quiz pop_last_quiz() {
+        // взять последнюю игру из (заранее перемешанного) списка и удалить ее из списка
+        Quiz choosen = this->quizes.back();
+        this->quizes.pop_back();
+        this->quizes.insert(this->quizes.begin(), choosen);
+        return choosen;
     }
 };
 
@@ -294,21 +302,71 @@ public:
         std::shuffle(std::begin(this->bad_events), std::end(this->bad_events), rng);
     }
     
-    Event get_random_event(EventType event_type) {
+//    Event get_random_event(EventType event_type) {
+//        if (event_type == EventType::good) {
+//            int events_count = static_cast<int>(this->good_events.size());
+//            int prob = 100 / events_count;
+//            int choise = get_random_choise(events_count, prob);
+//            Event choosen = this->good_events[choise];
+//            this->good_events.erase(this->good_events.begin() + choise);
+//            return choosen;
+//        } else { // if (event_type == EventType::bad) {
+//            int events_count = static_cast<int>(this->bad_events.size());
+//            int prob = 100 / events_count;
+//            int choise = get_random_choise(events_count, prob);
+//            Event choosen =  this->bad_events[choise];
+//            this->bad_events.erase(this->bad_events.begin() + choise);
+//            return choosen;
+//        }
+//    }
+    
+    Event pop_last_event(EventType event_type) {
+        // взять последнее событие из (заранее перемешанного) списка и удалить его из списка
         if (event_type == EventType::good) {
-            int events_count = static_cast<int>(this->good_events.size());
-            int prob = 100 / events_count;
-            int choise = get_random_choise(events_count, prob);
-            Event choosen = this->good_events[choise];
-            this->good_events.erase(this->good_events.begin() + choise);
+            Event choosen = this->good_events.back();
+            this->good_events.pop_back();
+            this->good_events.insert(this->good_events.begin(), choosen);
             return choosen;
-        } else { // if (event_type == EventType::bad) {
-            int events_count = static_cast<int>(this->bad_events.size());
-            int prob = 100 / events_count;
-            int choise = get_random_choise(events_count, prob);
-            Event choosen =  this->bad_events[choise];
-            this->bad_events.erase(this->bad_events.begin() + choise);
+        } else {
+            Event choosen = this->bad_events.back();
+            this->bad_events.pop_back();
+            this->bad_events.insert(this->bad_events.begin(), choosen);
             return choosen;
         }
+    }
+};
+
+
+enum class monthType {
+    GOOD,
+    BAD,
+    QUIZ,
+    EMPTY
+};
+
+class YearEvents {
+private:
+    short good_events_count = 1;
+    short bad_events_count = 1;
+    short quizes_count = 1;
+    short no_events_count = 0;
+    
+public:
+    std::vector<monthType> monthes;
+    
+    YearEvents() {
+//        good_events_count = get_random_choise(3, 33);
+//        bad_events_count = get_random_choise(3, 33);
+//        quizes_count = get_random_choise(2, 50);
+        no_events_count = 12 - good_events_count - bad_events_count - quizes_count;
+        
+        for (size_t i = 0; i < good_events_count; ++i) { monthes.push_back(monthType::GOOD); }
+        for (size_t i = 0; i < bad_events_count; ++i) { monthes.push_back(monthType::BAD); }
+        for (size_t i = 0; i < quizes_count; ++i) { monthes.push_back(monthType::QUIZ); }
+        for (size_t i = 0; i < no_events_count; ++i) { monthes.push_back(monthType::EMPTY); }
+        
+        auto rd = std::random_device {};
+        auto rng = std::default_random_engine { rd() };
+        std::shuffle(std::begin(this->monthes), std::end(this->monthes), rng);
     }
 };
