@@ -88,10 +88,14 @@ int get_valid_integer_input(int min, int max, bool need_tip) {
     while (!got) {
         std::string text;
         std::cin >> text;
-        if (is_integer_str(text)) {
-            int num = stoi(text);
-            if (is_in_limits(num, min, max)) {
-                return num;
+        if (text.size() < 10) {
+            if (is_integer_str(text)) {
+                int num = stoi(text);
+                if (is_in_limits(num, min, max)) {
+                    return num;
+                } else {
+                    show_tip(min, max);
+                }
             } else {
                 show_tip(min, max);
             }

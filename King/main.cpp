@@ -421,6 +421,9 @@ private:
         this->tourism_multiplying_factor += static_cast<double>(event.change_tourism_percentage) / 100;
         this->harvest_multiplying_factor += static_cast<double>(event.change_harvest_percentage) / 100;
         this->next_year_cost_of_life_multiplying_factor += static_cast<double>(event.change_cost_of_life_percentage) / 100;
+        
+        std::cout << "После этого события:" << "\nКазна: " << this->balance << "\nНаселение: " << this->countrymen << "\nКоэффициент турзима в следующем году: " << this->tourism_multiplying_factor << "\nКоэффициент урожая в следущем году: " << this->harvest_multiplying_factor << "\nКоэффициент стоимости жизни в следующем году: " << this->next_year_cost_of_life_multiplying_factor << "\nИзменение населения в следующем году: " << this->next_year_countrymen << std::endl;
+        
     }
     
     void _play_quiz(Quiz quize) {
