@@ -336,6 +336,8 @@ private:
             lost_farm_land = this->planted_square;
         }
         short harvested = this->planted_square - lost_farm_land;
+        harvested *= this->harvest_multiplying_factor;
+        
         std::cout << "С " << this->planted_square << " квадратных миль засеянной земли вы собрали " << harvested << " квадратных миль урожая" << std::endl;
         
         // причины потери урожая
@@ -354,6 +356,7 @@ private:
         this->balance += revenue;
         std::cout << "Вы заработали на урожае " << revenue << " роллодов" << std::endl;
         this->last_year_lost_farm_land = lost_farm_land;
+        this->harvest_multiplying_factor = 1.0;
     }
     
     void _count_tourists() {
