@@ -180,7 +180,7 @@ private:
 //            }
 //        };
         std::cout << "Сколько квадратных миль земли вы хотите продать под промышленность? ";
-        square_to_sell = get_valid_integer_input(0, this->farm_land, false);
+        square_to_sell = get_valid_integer_input(0, this->farm_land, true);
         
         this->farm_land -= square_to_sell;
         this->_add_money(this->price_of_selling_land * square_to_sell);
@@ -200,7 +200,7 @@ private:
 //            }
 //        };
         std::cout << "Сколько роллодов вы отдадите своим жителям? ";
-        money_to_distribute = get_valid_integer_input(0, this->balance, false);
+        money_to_distribute = get_valid_integer_input(0, this->balance, true);
         
         this->_spend_money(money_to_distribute);
         this->distributed_money = money_to_distribute;
@@ -211,7 +211,7 @@ private:
         short square_to_plant = 0;
         while (true) {
             std::cout << "Сколько квадратных миль земли вы хотите засеять? ";
-            square_to_plant = get_valid_integer_input(0, this->farm_land, false);
+            square_to_plant = get_valid_integer_input(0, this->farm_land, true);
             if (square_to_plant > this->farm_land) {
                 std::cout << "Увы, у вас есть только " << this->farm_land << " квадратных миль сельскохозяйственных земель" << std::endl;
             } else if (square_to_plant > this->countrymen * square_countryman_can_plant) {
@@ -239,7 +239,7 @@ private:
 //            };
 //        }
         std::cout << "Сколько роллодов вы хотите потратить на контроль загрязнений? ";
-        money_for_pollution_control = get_valid_integer_input(0, this->balance, false);
+        money_for_pollution_control = get_valid_integer_input(0, this->balance, true);
         this->_spend_money(money_for_pollution_control);
         this->money_spent_for_pollution_control = money_for_pollution_control;
     }
@@ -257,7 +257,7 @@ private:
 //            };
 //        }
         std::cout << "Сколько квадратных миль леса вы хотите вырубить? ";
-        cut_down_square = get_valid_integer_input(0, this->forest_land, false);
+        cut_down_square = get_valid_integer_input(0, this->forest_land, true);
         
         if (cut_down_square != 0) {
             this->forest_land -= cut_down_square;
