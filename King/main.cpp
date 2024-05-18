@@ -473,7 +473,7 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.3\n\n\n" << std::endl;
+        std::cout << "Version 1.6.4\n\n\n" << std::endl;
     }
     
     void print_intro() {
@@ -512,7 +512,7 @@ public:
         this->random_events_enabled = true;
     }
     
-    void init_speciphic_year(short years, int balance, int countrymen, int foreigners, int farm_land) {
+    void init_speciphic_year(short years, int balance, int countrymen, int foreigners, int farm_land, int forest_land) {
         // начать год правления с конкретными вводными
         
         this->custom_game = true;
@@ -521,37 +521,28 @@ public:
         this->countrymen = countrymen;
         this->foreigners = foreigners;
         this->farm_land = farm_land;
+        this->forest_land = forest_land;
     }
     
     void get_resume_data() {
         // задать пользователю вопросы по старту игры и запустить игру
-        short years = -1;
-        int balance = -1;
-        int countrymen = -1;
-        int foreigners = -1;
-        int farm_land = -1;
         
-        while (years < 0) {
-            std::cout << "Сколько лет вы занимали пост перед тем, как покинули его? ";
-            std::cin >> years;
-        }
-        while (balance < 0) {
-            std::cout << "Сколько у вас в казне? ";
-            std::cin >> balance;
-        }
-        while (countrymen < 0) {
-            std::cout << "Сколько жителей? ";
-            std::cin >> countrymen;
-        }
-        while (foreigners < 0) {
-            std::cout << "Сколько иностранных рабочих? ";
-            std::cin >> foreigners;
-        }
-        while (farm_land < 0) {
-            std::cout << "Сколько квадратных миль сельхоз земли? ";
-            std::cin >> farm_land;
-        }
-        init_speciphic_year(years, balance, countrymen, foreigners, farm_land);
+        int max_user_value = 500000;
+        
+        std::cout << "С какого года правления вы хотите начать игру? ";
+        int years = get_valid_integer_input(0, 8, false);
+        std::cout << "Сколько у вас в казне? ";
+        int balance = get_valid_integer_input(0, max_user_value, false);
+        std::cout << "Сколько жителей? ";
+        int countrymen = get_valid_integer_input(1, max_user_value, false);
+        std::cout << "Сколько иностранных рабочих? ";
+        int foreigners = get_valid_integer_input(1, max_user_value, false);
+        std::cout << "Сколько квадратных миль сельхоз земли? ";
+        int farm_land = get_valid_integer_input(1, max_user_value, false);
+        std::cout << "Сколько квадратных миль леса? ";
+        int forest_land = get_valid_integer_input(1, max_user_value, false);
+        
+        init_speciphic_year(years, balance, countrymen, foreigners, farm_land, forest_land);
     }
     
     void get_gamer_decisions() {
