@@ -28,7 +28,7 @@ const std::string GAME_OVER_BECAUSE_BALANCE = "В казне остались н
 
 const std::string GAME_OVER_BECAUSE_FOREINERS = "Число иностранных рабочих превысило число жителей. Будучи в меньшинстве, они восстали и захватили власть в стране";
 
-const std::string MESSAGE_ABOUT_DIES = " жителей умерло за год! И-за такого ужасного управления вас не только лишили должности и сняли с занимаемого поста, ";
+const std::string MESSAGE_ABOUT_DIES = " жителей умерло за год! Из-за такого ужасного управления вас не только лишили должности и сняли с занимаемого поста, ";
 
 const std::string MESSAGE_ABOUT_DIES_END_1 = "но и выбили вам левый глаз!";
 const std::string MESSAGE_ABOUT_DIES_END_2 = "еще вы заработали очень плохую репутацию.";

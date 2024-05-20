@@ -250,6 +250,10 @@ private:
         if (this->money_spent_for_pollution_control >= this->pollution_control_factor) {
             this->died_because_of_pollution = static_cast<int>(this->died_because_of_pollution / (this->money_spent_for_pollution_control / this->pollution_control_factor));
         }
+        
+        if (this->died_because_of_pollution > this->countrymen - starved) {
+            this->died_because_of_pollution = this->countrymen - starved;
+        }
         if (this->died_because_of_pollution > 0) {
             std::cout << this->died_because_of_pollution << " жителей погибло из-за углеродного и пылевого загрязнения" << std::endl;
         }
@@ -291,13 +295,16 @@ private:
                                                    + this->money_spent_for_pollution_control / this->pollution_control_factor
                                                    - ((this->sold_square) / 50 )
                                                    - this->died_count / 2 );
-        std::cout << "Население изменилось: " << countrymen_change << " человек";
-        if (countrymen_change < 0) {
-            std::cout << " покинуло страну" << std::endl;
-        } else {
-            std::cout << " прибыло в страну" << std::endl;
-        }
-        this->countrymen += countrymen_change;
+        
+        if (countrymen_change != 0) {
+            std::cout << "Население изменилось: ";
+            if (countrymen_change < 0) {
+                std::cout << -countrymen_change << " человек покинуло страну" << std::endl;
+            } else {
+                std::cout << countrymen_change << " человек прибыло в страну" << std::endl;
+            }
+            this->countrymen += countrymen_change;
+        };
         this->foreigners += foreigners_change;
     }
     
@@ -328,7 +335,12 @@ private:
         int revenue = static_cast<int>(harvested * this->price_of_selling_land / 2);
         if (revenue < 0) { revenue = 0; }
         this->balance += revenue;
-        std::cout << "Вы заработали на урожае " << revenue << " роллодов" << std::endl;
+        
+        if (revenue > 0) {
+            std::cout << "Вы заработали на урожае " << revenue << " роллодов" << std::endl;
+        } else {
+            std::cout << "Урожай не принес дохода" << std::endl;
+        }
         this->last_year_lost_farm_land = lost_farm_land;
         this->harvest_multiplying_factor = 1.0;
     }
@@ -346,7 +358,11 @@ private:
         
         revenue *= this->tourism_multiplying_factor;
         
-        std::cout << "Вы заработали " << revenue << " роллодов на туристах" << std::endl;
+        if (revenue > 0) {
+            std::cout << "Вы заработали " << revenue << " роллодов на туристах" << std::endl;
+        } else {
+            std::cout << "Туристы не принесли дохода" << std::endl;
+        }
         if (koef_2 != 0 && !(koef_1 - koef_2 >= this->last_year_tourists_revenue)) {
             std::cout << "Поток туристов уменьшился, потому что ";
             short reason = get_random_choise(5, 20);
@@ -673,6 +689,8 @@ int main(int argc, const char * argv[]) {
         bool is_game_over = game.countYearResults();
 //        game.print_state();
         if (is_game_over) {
+            std::cout << "Нажмите любоую клавишу, чтобы закрыть окно." << std::endl;
+            std::cin.get();
             return 0;
         }
     }
