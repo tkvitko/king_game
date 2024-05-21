@@ -499,20 +499,18 @@ public:
     void getResumeDataFromUser() {
         // задать пользователю вопросы по старту игры и запустить игру
         
-        int max_user_value = 500000;
-        
         std::cout << "С какого года правления вы хотите начать игру? ";
         int years = get_valid_integer_input(0, 8, false);
         std::cout << "Сколько у вас в казне? ";
-        int balance = get_valid_integer_input(0, max_user_value, false);
+        int balance = get_valid_integer_input(0, 500000, false);
         std::cout << "Сколько жителей? ";
-        int countrymen = get_valid_integer_input(1, max_user_value, false);
+        int countrymen = get_valid_integer_input(1, 2000, false);
         std::cout << "Сколько иностранных рабочих? ";
-        int foreigners = get_valid_integer_input(0, max_user_value, false);
+        int foreigners = get_valid_integer_input(0, 2000, false);
         std::cout << "Сколько квадратных миль сельхоз земли? ";
-        int farm_land = get_valid_integer_input(1, max_user_value, false);
+        int farm_land = get_valid_integer_input(0, 2000, false);
         std::cout << "Сколько квадратных миль леса? ";
-        int forest_land = get_valid_integer_input(1, max_user_value, false);
+        int forest_land = get_valid_integer_input(0, 2000, false);
         
         initSpeciphicYear(years, balance, countrymen, foreigners, farm_land, forest_land);
     }
@@ -582,8 +580,7 @@ public:
         std::hash<GameResult> hashFunction;
 
         auto year_hash = hashFunction(resut);
-        std::cout << "Хеш вашего результата:" << std::endl;
-        std::cout << year_hash << "\n" << std::endl;
+        std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << this->years << "," << this->balance << "," << this->countrymen << "\n***" << std::endl;
         
         // если не хватило земли по итогам продажи для компенсации затрат на похороны:
         if (this->farm_land < 0) {
