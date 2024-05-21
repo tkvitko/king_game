@@ -112,7 +112,7 @@ public:
                            good_event_1, bad_event_1);
         this->quizes.push_back(quiz_1);
         
-        std::vector<std::pair<ChangingField, int>> good_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, 40000)};
+        std::vector<std::pair<ChangingField, int>> good_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, 30000)};
         Event good_event_2 = Event("Служба внешней разведки доложила, что господин бывший президент с семьёй был успешно вывезен с территории сопредельного государства. Операция была замаскирована под похищение конкурирующей партией, так что к нам вопросов нет.\n", good_params_2);
         
         std::vector<std::pair<ChangingField, int>> bad_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, -20000)};
@@ -135,8 +135,8 @@ public:
                            good_event_3, bad_event_3);
         this->quizes.push_back(quiz_3);
         
-        std::vector<std::pair<ChangingField, int>> good_params_4 = {std::pair<ChangingField, int>(ChangingField::balance, 30000)};
-        Event good_event_4 = Event("Феноменально!  Всю партию изделий смели за неделю. Ещё бы, флагманские характеристики  по очень привлекательной цене. Без экономии, разумеется, не обошлось, так что проработают аппараты максимум полгода. Хорошо, что в прошлом году мы не успели принять закон о защите прав потребителя. Так что о возвратах беспокоится не стоит. Итоговая прибыль 30000 ролодов.\n", good_params_4);
+        std::vector<std::pair<ChangingField, int>> good_params_4 = {std::pair<ChangingField, int>(ChangingField::balance, 20000)};
+        Event good_event_4 = Event("Феноменально!  Всю партию изделий смели за неделю. Ещё бы, флагманские характеристики  по очень привлекательной цене. Без экономии, разумеется, не обошлось, так что проработают аппараты максимум полгода. Хорошо, что в прошлом году мы не успели принять закон о защите прав потребителя. Так что о возвратах беспокоится не стоит. Итоговая прибыль 20000 ролодов.\n", good_params_4);
                                   
         std::vector<std::pair<ChangingField, int>> bad_params_4 = {std::pair<ChangingField, int>(ChangingField::balance, -10000)};
         Event bad_event_4 = Event("Поделка этих болванов оказалась никому не нужна!  В итоге, они разорились, а вы потеряли 10000 ролодов.\n", bad_params_4);
@@ -146,11 +146,11 @@ public:
                            good_event_4, bad_event_4);
         this->quizes.push_back(quiz_4);
         
-        std::vector<std::pair<ChangingField, int>> good_params_5 = {std::pair<ChangingField, int>(ChangingField::balance, 40000)};
-        Event good_event_5 = Event("Господин премьер-министр, они вернулись! Золота, правда, не нашли, зато наткнулись на огромный кусок амбры. Ваша доля, в смысле, отчисления в казну, составили 40000 ролодов.\n", good_params_5);
+        std::vector<std::pair<ChangingField, int>> good_params_5 = {std::pair<ChangingField, int>(ChangingField::balance, 30000)};
+        Event good_event_5 = Event("Господин премьер-министр, они вернулись! Золота, правда, не нашли, зато наткнулись на огромный кусок амбры. Ваша доля, в смысле, отчисления в казну, составили 30000 ролодов.\n", good_params_5);
                                   
-        std::vector<std::pair<ChangingField, int>> bad_params_5 = {std::pair<ChangingField, int>(ChangingField::balance, -30000)};
-        Event bad_event_5 = Event("Господин премьер-министр, эти ротозеи не только не нашли сокровищ, но и умудрились угробить два корабля из трёх. Ваши потери, с учётом страховки, составили 30000 ролодов.\n", bad_params_5);
+        std::vector<std::pair<ChangingField, int>> bad_params_5 = {std::pair<ChangingField, int>(ChangingField::balance, -20000)};
+        Event bad_event_5 = Event("Господин премьер-министр, эти ротозеи не только не нашли сокровищ, но и умудрились угробить два корабля из трёх. Ваши потери, с учётом страховки, составили 20000 ролодов.\n", bad_params_5);
                                   
         Quiz quiz_5 = Quiz("Родственник одного из ваших приближённых утверждает, что ему по наследству досталась карта, на которой отмечено примерное местоположение затонувшего много лет назад корабля, перевозившего золото. Ему требуются средства на организацию экспедиции. В случае успеха он обещает передать 40% в пользу государства. Откажете (1) или профинансируете его авантюру (2)?\n",
                            "Разумно! Какой идиот в наше время поверит в пиратские сокровища? Кстати, не могли бы вы предоставить мне отпуск? Я давно обещал жене морской круиз.\n",
@@ -158,20 +158,20 @@ public:
         this->quizes.push_back(quiz_5);
         
         std::vector<std::pair<ChangingField, int>> good_params_6 = {std::pair<ChangingField, int>(ChangingField::harvest_percentage, 100)};
-        Event good_event_6 = Event("Хорошие новости! Согласно анализу почвы, новое удобрение сработало. Говорить о результатах пока, конечно, рано, но, по словам специалистов, в будущем году можно ожидать двукратного прироста урожая.", good_params_6);
+        Event good_event_6 = Event("Хорошие новости! Согласно анализу почвы, новое удобрение сработало. Говорить о результатах пока, конечно, рано, но, по словам специалистов, в этом году можно ожидать двукратного прироста урожая.", good_params_6);
         
         std::vector<std::pair<ChangingField, int>> bad_params_6 = {std::pair<ChangingField, int>(ChangingField::harvest_percentage, -50)};
-        Event bad_event_6 = Event("Эти горе-учёные опять что-то напутали. По словам приглашённых независимых специалистов, плодородность почвы упала в 2 раза, так что в ближайший год нас ждёт неурожай.", bad_params_6);
+        Event bad_event_6 = Event("Эти горе-учёные опять что-то напутали. По словам приглашённых независимых специалистов, плодородность почвы упала в 2 раза, так что в текущий год нас ждёт неурожай.", bad_params_6);
         Quiz quiz_6 = Quiz("Учёный совет просит разрешить проведение испытаний нового удобрения. Откажете (1) или разрешите (2)?\n",
                            "Правильно! Всё зло от химии!\n",
                            good_event_6, bad_event_6);
         this->quizes.push_back(quiz_6);
         
         std::vector<std::pair<ChangingField, int>> good_params_7 = {std::pair<ChangingField, int>(ChangingField::cost_of_life_percentage, -25)};
-        Event good_event_7 = Event("Поздравляю, господин премьер-министр! Испытательные прогоны увенчались полным успехом, а регулярные рейсы начнутся с будущего года.", good_params_7);
+        Event good_event_7 = Event("Поздравляю, господин премьер-министр! Испытательные прогоны увенчались полным успехом, а регулярные рейсы начнутся с этого года.", good_params_7);
         
-        std::vector<std::pair<ChangingField, int>> bad_params_7 = {std::pair<ChangingField, int>(ChangingField::balance, -20000)};
-        Event bad_event_7 = Event("Проект провалился. Почва в месте прокладки оказалась неподходящей. Потери казны составили 20000 ролодов.", bad_params_7);
+        std::vector<std::pair<ChangingField, int>> bad_params_7 = {std::pair<ChangingField, int>(ChangingField::balance, -10000)};
+        Event bad_event_7 = Event("Проект провалился. Почва в месте прокладки оказалась неподходящей. Потери казны составили 10000 ролодов.", bad_params_7);
         
         Quiz quiz_7 = Quiz("Министерство транспорта предложило проект прокладки железной дороги по части территории острова. В случае успеха мы сможем снизить стоимость жизни граждан в будущем году на 25%. Отказать (1) или разрешить (2)?\n",
                            "Дальновидно. Консервативно настроенные граждане могут не одобрить такой инновации. Лошадки понадёжнее будут.\n",
@@ -215,8 +215,8 @@ public:
         Event event_1 = Event("Министр внутренних дел доложил о поимке чиновника-взяточника. Негодяй отгрохал себе огромную виллу. После её конфискации бюджет пополнился на 30000 ролодов.\n", good_params_1);
         this->good_events.push_back(event_1);
         
-        std::vector<std::pair<ChangingField, int>> good_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, 60000)};
-        Event event_2 = Event("Всемирный Банк развития выделил вашей стране кредит на сумму 60000 ролодов. Правда, под 150% годовых. Но учитывая срок в 16 лет и выплату в конце срока, это уже не ваши проблемы. Правда, о третьем премьерском сроке лучше забыть.\n", good_params_2);
+        std::vector<std::pair<ChangingField, int>> good_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, 30000)};
+        Event event_2 = Event("Всемирный Банк развития выделил вашей стране кредит на сумму 30000 ролодов. Правда, под 150% годовых. Но учитывая срок в 16 лет и выплату в конце срока, это уже не ваши проблемы. Правда, о третьем премьерском сроке лучше забыть.\n", good_params_2);
         this->good_events.push_back(event_2);
         
         std::vector<std::pair<ChangingField, int>> good_params_3 = {std::pair<ChangingField, int>(ChangingField::countryman_next_year, 50)};

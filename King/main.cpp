@@ -55,7 +55,7 @@ private:
     int start_balance_max = 61000;
     int start_contrymen_min = 490;
     int start_contrymen_max = 510;
-    int price_for_cutting_down_forest = 1;
+    int price_for_cutting_down_forest = 10;
     
     // режим
     bool custom_game = false;    // обычный режим игры без ввода стартовых данных пользователем
