@@ -9,7 +9,6 @@
 #include <fstream>
 #include <random>
 #include <functional>
-#include "config_file.h"
 #include "utils.hpp"
 #include "strings.hpp"
 #include "constants.h"
@@ -106,41 +105,6 @@ private:
     
     short getSettled_() {
         return this->countrymen - this->population_change; // оседлые жители
-    }
-    
-    void readConfig_() {
-        // чтение конфигурации
-        std::vector<std::string> ln = {
-            "farm_land",
-            "forest_land",
-            "cost_of_living",
-            "cost_of_funeral",
-            "pollution_control_factor",
-            "square_countryman_can_plant",
-            "cost_of_planting_land_min",
-            "cost_of_planting_land_max",
-            "price_of_selling_land_min",
-            "price_of_selling_land_max"
-        };
-        
-        std::ifstream f_in;
-//        f_in.open("config.txt");
-        f_in.open("/Users/tkvitko/PycharmProjects/basic-computer-games/53_King/cpp/King/King/config.txt");
-        if(! f_in) {
-        } else {
-            CFG::ReadFile(f_in, ln,
-                          this->farm_land,
-                          this->forest_land,
-                          this->cost_of_living,
-                          this->cost_of_funeral,
-                          this->pollution_control_factor,
-                          this->square_countryman_can_plant,
-                          this->cost_of_planting_land_min,
-                          this->cost_of_planting_land_max,
-                          this->price_of_selling_land_min,
-                          this->price_of_selling_land_max);
-            f_in.close();
-        }
     }
     
     double getRandomFloatFromZeroToOne_() {
@@ -434,9 +398,7 @@ private:
     
 public:
     
-    GameState() {
-        this->readConfig_();
-    }
+    GameState() {}
     
     void printHeader() {
         // вывести приветствие
@@ -653,42 +615,52 @@ int main(int argc, const char * argv[]) {
      setlocale(LC_CTYPE, "rus");
     #endif
 
-    GameState game = GameState();
-    game.printHeader();
-
-    // показывать ли инструкцию
-    std::cout << QUESTION_ABOUT_INTRO;
-    int choise_intro = get_valid_integer_input(1, 2, false);
-    if (choise_intro == 1) {
-        game.printIntro();
-    }
-
-    // игра с нуля или вводим стартовые значения
-    std::cout << QUESTION_ABOUT_GAME_MODE;
-    int choise_mode = get_valid_integer_input(1, 2, false);
-    if (choise_mode == 2) {
-        game.getResumeDataFromUser();
-    }
-
-    // игра со случайными событиями или без
-    std::cout << QUESTION_ABOUT_RANDOM_EVENTS;
-    int choise_random = get_valid_integer_input(1, 2, false);
-    if (choise_random == 1) {
-        game.enableRandomEvents();
-    }
-
     while (true) {
-        game.initNewYear();
-        game.printState();
-        game.getYearDecisionsFromUser();
+        
+        try {
+    
+            GameState game = GameState();
+            game.printHeader();
 
-        game.processYear();
-        bool is_game_over = game.countYearResults();
-//        game.print_state();
-        if (is_game_over) {
-            std::cout << "Нажмите любоую клавишу, чтобы закрыть окно." << std::endl;
-            std::cin.get();
+            // показывать ли инструкцию
+            std::cout << QUESTION_ABOUT_INTRO;
+            int choise_intro = get_valid_integer_input(1, 2, false);
+            if (choise_intro == 1) {
+                game.printIntro();
+            }
+
+            // игра с нуля или вводим стартовые значения
+            std::cout << QUESTION_ABOUT_GAME_MODE;
+            int choise_mode = get_valid_integer_input(1, 2, false);
+            if (choise_mode == 2) {
+                game.getResumeDataFromUser();
+            }
+
+            // игра со случайными событиями или без
+            std::cout << QUESTION_ABOUT_RANDOM_EVENTS;
+            int choise_random = get_valid_integer_input(1, 2, false);
+            if (choise_random == 1) {
+                game.enableRandomEvents();
+            }
+
+            while (true) {
+                game.initNewYear();
+                game.printState();
+                game.getYearDecisionsFromUser();
+
+                game.processYear();
+                bool is_game_over = game.countYearResults();
+        //        game.print_state();
+                if (is_game_over) {
+                    std::cout << "Нажмите любоую клавишу, чтобы закрыть окно." << std::endl;
+                    std::cin.get();
+                    return 0;
+                }
+            }
+        } catch (ExitGame& e) {
             return 0;
+        } catch (RestartGame& e) {
+            continue;
         }
     }
 }

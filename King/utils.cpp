@@ -12,6 +12,14 @@
 #include <thread>
 #include "utils.hpp"
 
+const char* RestartGame::what() const noexcept {
+    return "Перезапуск игры";
+};
+
+const char* ExitGame::what() const noexcept {
+    return "Выход из игры";
+};
+
 short get_random_choise(short choises_number, short probability) {
     // Функция вернет выпавший вариант в соответствии с вероятностью выпадения
     
@@ -88,6 +96,13 @@ int get_valid_integer_input(int min, int max, bool need_tip) {
     while (!got) {
         std::string text;
         std::cin >> text;
+        
+        if (text == "restart") {
+            throw RestartGame();
+        } else if (text == "exit") {
+            throw ExitGame();
+        }
+        
         if (text.size() < 10) {
             if (is_integer_str(text)) {
                 int num = stoi(text);
