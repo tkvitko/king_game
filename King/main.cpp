@@ -194,7 +194,7 @@ private:
             } else if (square_to_plant > this->countrymen * square_countryman_can_plant) {
                 std::cout << "Увы, каждый житель может засеять только " << square_countryman_can_plant << " квадратные мили" << std::endl;
             } else if (square_to_plant * this->cost_of_planting_land > this->balance) {
-                std::cout << "Подумайте еще раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
+                std::cout << "Подумайте ещё раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
             } else {
                 break;
             };
@@ -226,7 +226,7 @@ private:
             if (deaths_when_cutting == 1) {
                 int dead_count = this->countrymen * 0.1;
                 this->countrymen -= dead_count;
-                std::cout << "Случилось несчатье при рубке! " << dead_count << " жителей завалило деревьями." << std::endl;
+                std::cout << "Случилось несчастье при рубке! " << dead_count << " жителей завалило деревьями." << std::endl;
             }
         }
     }
@@ -265,7 +265,7 @@ private:
             std::cout << "Пришлось потратить " << funeral_cost << " роллодов на похороны" << std::endl;
             this->balance -= funeral_cost;  // вычитание из казны
             if (this->balance < 0) {
-                std::cout << "В казне не хватает денег на похороны, придется продать часть земли" << std::endl;
+                std::cout << "В казне не хватает денег на похороны, придётся продать часть земли" << std::endl;
 //                std::cout << "farm land " << this->farm_land << " balance " << this->balance << " price_of_selling_land " << this->price_of_selling_land << " division " << this->balance / this->price_of_selling_land << std::endl;
                 // компенсация отрицательного баланса за счет продажи земли
                 // подозрительный момент, т.к. по сути земля продается промшленности, но эта продажа уже нигде не учитывается в вопросах, связанных с промышленностью
@@ -339,7 +339,7 @@ private:
         if (revenue > 0) {
             std::cout << "Вы заработали на урожае " << revenue << " роллодов" << std::endl;
         } else {
-            std::cout << "Урожай не принес дохода" << std::endl;
+            std::cout << "Урожай не принёс дохода" << std::endl;
         }
         this->last_year_lost_farm_land = lost_farm_land;
         this->harvest_multiplying_factor = 1.0;
@@ -367,7 +367,7 @@ private:
             std::cout << "Поток туристов уменьшился, потому что ";
             short reason = get_random_choise(5, 20);
             if (reason == 1) {
-                std::cout << "в озерах стало меньше рыбы из-за загрязнения воды";
+                std::cout << "в озёрах стало меньше рыбы из-за загрязнения воды";
             } else if (reason == 2) {
                 std::cout << "в небе стало меньше птиц из-за загрязнения воздуха";
             } else if (reason == 3) {
@@ -533,7 +533,7 @@ public:
         if (this->random_events_enabled) {
             YearEvents year_events = YearEvents();
             for (size_t i = 0; i < 12; ++i) {
-                std::cout << "...идет месяц " << i + 1 << std::endl;
+                std::cout << "...идёт месяц " << i + 1 << std::endl;
 //                game.process_random_event();
                 monthType month_type = year_events.monthes[i];
                 
