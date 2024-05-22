@@ -107,12 +107,6 @@ private:
         return this->countrymen - this->population_change; // оседлые жители
     }
     
-    double getRandomFloatFromZeroToOne_() {
-        std::default_random_engine generator;
-        std::uniform_real_distribution<double> distribution(0.0, 1.0);
-        return distribution(generator);
-    }
-    
     long addMoney_(int amount) {return this->balance += amount; }
     long spendMoney_(const int amount) {
         if (amount <= this->balance) {
@@ -209,7 +203,7 @@ private:
         
         // погибшие от загрязнений
         // базовое значение - процент от площади земли, проданной под промышленность
-        this->died_because_of_pollution = static_cast<int>(this->getRandomFloatFromZeroToOne_() * (this->sold_square));
+        this->died_because_of_pollution = static_cast<int>(getRandomFloatFromZeroToOne_() * (this->sold_square));
         // уменьшение базового значения, если на контроль загрязнений было выделено больше порога (фактора)
         if (this->money_spent_for_pollution_control >= this->pollution_control_factor) {
             this->died_because_of_pollution = static_cast<int>(this->died_because_of_pollution / (this->money_spent_for_pollution_control / this->pollution_control_factor));
@@ -246,7 +240,7 @@ private:
         // инорстранные рабочие
         short foreigners_change = 0;
         if (this->sold_square != 0) {
-            foreigners_change = static_cast<int>(this->sold_square + this->getRandomFloatFromZeroToOne_() * 10 - this->getRandomFloatFromZeroToOne_() * 20);
+            foreigners_change = static_cast<int>(this->sold_square + getRandomFloatFromZeroToOne_() * 10 - getRandomFloatFromZeroToOne_() * 20);
             if (this->foreigners < 0) {
                 foreigners_change += 20;
             }
@@ -255,19 +249,19 @@ private:
         
         // новые жители
         long over_disctibuted_money = this->distributed_money / this->cost_of_living - this->countrymen;
-        short countrymen_change = static_cast<int>(over_disctibuted_money / 10
+        this->population_change = static_cast<int>(over_disctibuted_money / 10
                                                    + this->money_spent_for_pollution_control / this->pollution_control_factor
                                                    - ((this->sold_square) / 50 )
                                                    - this->died_count / 2 );
         
-        if (countrymen_change != 0) {
+        if (this->population_change != 0) {
             std::cout << "Население изменилось: ";
-            if (countrymen_change < 0) {
-                std::cout << -countrymen_change << " человек покинуло страну" << std::endl;
+            if (this->population_change < 0) {
+                std::cout << -this->population_change << " человек покинуло страну" << std::endl;
             } else {
-                std::cout << countrymen_change << " человек прибыло в страну" << std::endl;
+                std::cout << this->population_change << " человек прибыло в страну" << std::endl;
             }
-            this->countrymen += countrymen_change;
+            this->countrymen += this->population_change;
         };
         this->foreigners += foreigners_change;
     }
@@ -276,7 +270,7 @@ private:
         // подсчет урожая
         
         // потери урожая из-за загрязнений
-        short lost_farm_land = static_cast<int>((this->sold_square) * (this->getRandomFloatFromZeroToOne_() + 1.5) / 2);
+        short lost_farm_land = static_cast<int>((this->sold_square) * (getRandomFloatFromZeroToOne_() + 1.5) / 2);
         if (lost_farm_land > this->planted_square) {
             lost_farm_land = this->planted_square;
         }
@@ -312,7 +306,7 @@ private:
     void countTourists_() {
         // подсчет доходов с туристов
         
-        short koef_1 = static_cast<short>(this->getSettled_() * 22 + this->getRandomFloatFromZeroToOne_() * 500);
+        short koef_1 = static_cast<short>(this->getSettled_() * 22 + getRandomFloatFromZeroToOne_() * 500);
         short koef_2 = static_cast<short>(( this->sold_square) * 15);
         short revenue = 0;
         
