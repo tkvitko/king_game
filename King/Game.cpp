@@ -6,31 +6,78 @@
 //
 
 #include <iostream>
+#include <vector>
+#include <algorithm>
 #include "Game.hpp"
+
+#include "constants.h"
+
+
+#ifndef land_cpp
+#define land_cpp
 #include "Land.cpp"
+#endif /* land_cpp */
+
 #include "People.cpp"
 #include "Account.cpp"
 #include "utils.hpp"
+#include "strings.hpp"
 
-int START_BALANCE_MIN = 59000;
-int START_BALANCE_MAX = 61000;
-int START_COUNTRYMAN_MIN = 490;
-int START_COUNTRYMAN_MAX = 510;
 
-int PRICE_OF_SELLING_LAND_MIN = 95;
-int PRICE_OF_SELLING_LAND_MAX = 105;
-int PRICE_OF_PLANTING_LAND_MIN = 10;
-int PRICE_OF_PLANTING_LAND_MAX = 15;
-int PRICE_OF_CUTTING_DONW_FOREST = 10;
+class NextYearParams {
+public:
+    NextYearParams() {};
+    
+    int getCountrymanChange() { return countrymen_change_; }
+    
+    void setCountrymanChange(int count) {
+        countrymen_change_ = count;
+    }
+    
+private:
+    int countrymen_change_ = 0;
+};
 
-int PRICE_OF_LIVING = 100;
-int PRICE_OF_FUNERAL = 9;
-int POLLUTION_CONTROL_FACTOR = 25;
 
+struct GameResult {
+    int years;
+    int balance;
+    int countrymen;
+};
+
+
+template <>
+struct std::hash<GameResult> {
+    size_t operator()(const GameResult& obj) const {
+        size_t hashValue = (
+                            std::hash<int>()(obj.years) << 1)
+                            ^ (std::hash<int>()(obj.balance) << 2)
+                            ^ ((std::hash<int>()(obj.countrymen)) << 3)
+                            ^ (std::hash<std::string>()("dialas")
+                               );
+        return hashValue;
+    }
+};
 
 
 class Game {
 public:
+    
+    int START_BALANCE_MIN = 59000;
+    int START_BALANCE_MAX = 61000;
+    int START_COUNTRYMAN_MIN = 490;
+    int START_COUNTRYMAN_MAX = 510;
+
+    int PRICE_OF_SELLING_LAND_MIN = 95;
+    int PRICE_OF_SELLING_LAND_MAX = 105;
+    int PRICE_OF_PLANTING_LAND_MIN = 10;
+    int PRICE_OF_PLANTING_LAND_MAX = 15;
+    int PRICE_OF_CUTTING_DONW_FOREST = 10;
+
+    int PRICE_OF_LIVING = 100;
+    int PRICE_OF_FUNERAL = 9;
+    int POLLUTION_CONTROL_FACTOR = 25;
+    
     Game() {
         // инициализация новой игры
         
@@ -85,20 +132,23 @@ public:
         
         printState();
         getYearDecisionsFromUser();
+
+        countDeaths_();
+        countPeople_();
+        countHarvest_();
+        countTourists_();
         
-        // не переписанное
-        this->countDeaths_();
-        this->countPeople_();
-        this->countHarvest_();
-        this->countTourists_();
+        ShowCurrentState_();
+        checkIfGameOver_();
         
         // применить изменение населения на следующий год
-        this->countrymen += this->next_year_countrymen;
-        this->next_year_countrymen = 0;
+        people_.increase(next_year_params_.getCountrymanChange());
         
-        this->cost_of_living *= this->next_year_cost_of_life_multiplying_factor;
-        this->next_year_cost_of_life_multiplying_factor = 1.0;
+        next_year_params_.setCountrymanChange(0);
+        account_.setPriceOfLivingMultiplyingFactor(1.0);
     }
+    
+    
     
 private:
     
@@ -120,9 +170,14 @@ private:
     void plantFarmLand_() {
         // процесс засева сельхоз земель
         std::cout << "Сколько квадратных миль земли вы хотите засеять? ";
-        int max_square_to_plant = std::max(land_.getFarmSquare(),
-                                           people_.getCountrymen() * people_.getSquareCountrymanCanPlant(),
-                                           account_.getBalance() / account_.getPriceOfPlantingLand());
+        
+        std::vector<int> squares = {land_.getFarmSquare(),
+            people_.getCountrymen() * people_.getSquareCountrymanCanPlant(),
+            account_.getBalance() / account_.getPriceOfPlantingLand()};
+        std::vector<int>::iterator result;
+        result = std::max_element(squares.begin(), squares.end());
+        
+        int max_square_to_plant = *result;
         int square = get_valid_integer_input(0, max_square_to_plant, true);
         account_.plantFarmLand(square);  // изменения бюджета
         land_.plantFarmLand(square);     // вспашка и сбор урожая
@@ -165,27 +220,27 @@ private:
         
         // погибшие от загрязнений
         // базовое значение - процент от площади земли, проданной под промышленность
-        int died_because_of_pollution = static_cast<int>(getRandomFloatFromZeroToOne_() * (land_.getSoldSquare()));
+        died_because_of_pollution_ = static_cast<int>(getRandomFloatFromZeroToOne_() * (land_.getSoldSquare()));
         // уменьшение базового значения, если на контроль загрязнений было выделено больше порога (фактора)
         if (account_.getAmountSpentOnPollutonControl() >= POLLUTION_CONTROL_FACTOR) {
-            died_because_of_pollution = static_cast<int>(died_because_of_pollution /
+            died_because_of_pollution_ = static_cast<int>(died_because_of_pollution_ /
                                                          (account_.getAmountSpentOnPollutonControl() / POLLUTION_CONTROL_FACTOR));
         }
         
         // если от загрязнений погибло больше, чем осталось, считаем, что погибли все оставшиеся
-        if (died_because_of_pollution > people_.getCountrymen() - died_because_of_no_money) {
-            died_because_of_pollution = people_.getCountrymen() - died_because_of_no_money;
+        if (died_because_of_pollution_ > people_.getCountrymen() - died_because_of_no_money) {
+            died_because_of_pollution_ = people_.getCountrymen() - died_because_of_no_money;
         }
-        if (died_because_of_pollution > 0) {
-            std::cout << died_because_of_pollution << " жителей погибло из-за углеродного и пылевого загрязнения" << std::endl;
+        if (died_because_of_pollution_ > 0) {
+            std::cout << died_because_of_pollution_ << " жителей погибло из-за углеродного и пылевого загрязнения" << std::endl;
         }
             
         // затраты на похороны
-        died_count_ = died_because_of_no_money + died_because_of_pollution;
+        died_count_ = died_because_of_no_money + died_because_of_pollution_;
         if (this->died_count_ > 0) {
             int funeral_cost = died_count_ * PRICE_OF_FUNERAL;
             std::cout << "Пришлось потратить " << funeral_cost << " роллодов на похороны" << std::endl;
-            account_.spendMoneyToFuneral(funeral_cost, land_, account_);
+            account_.spendMoneyToFuneral(funeral_cost, land_);
         }
         people_.decrease(died_count_);
     }
@@ -264,7 +319,7 @@ private:
         } else {
             std::cout << "Туристы не принесли дохода" << std::endl;
         }
-        if (koef_2 != 0 && !(koef_1 - koef_2 >= this->last_year_tourists_revenue)) {
+        if (koef_2 != 0 && !(koef_1 - koef_2 >= last_year_tourists_revenue_)) {
             std::cout << "Поток туристов уменьшился, потому что ";
             short reason = get_random_choise(5, 20);
             if (reason == 1) {
@@ -280,15 +335,72 @@ private:
             }
             std::cout << std::endl;
         }
-        this->last_year_tourists_revenue = revenue;
+        last_year_tourists_revenue_ = revenue;
         account_.add_money(revenue);
         people_.setTourismMultiplyingFactor(1.0);
+    }
+    
+    void ShowCurrentState_() {
+        std::cout << "\nТекущее состояние игры: " << year_ << " год правления, " << account_.getBalance() << " роллодов в казне, " << people_.getCountrymen() << " жителей" << std::endl;
+        GameResult resut = GameResult{
+            year_,
+            account_.getBalance(),
+            people_.getCountrymen()};
+        std::hash<GameResult> hashFunction;
+
+        auto year_hash = hashFunction(resut);
+        std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << year_ << "," << account_.getBalance() << "," << people_.getCountrymen() << "\n***" << std::endl;
+    }
+    
+    void checkIfGameOver_() {
+        // вычислить результаты года
+        
+        // если слишком много погибших
+        if (this->died_count_ > 200) {
+            std::cout << this->died_count_ << MESSAGE_ABOUT_DIES;
+            short reason = get_random_choise(3, 33);
+            if (reason == 1) {
+                std::cout << MESSAGE_ABOUT_DIES_END_1;
+            } else if (reason == 2) {
+                std::cout << MESSAGE_ABOUT_DIES_END_2;
+            } else {
+                std::cout << MESSAGE_ABOUT_DIES_END_3;
+            }
+            std::cout << std::endl;
+            throw GameOver();
+        }
+        
+        // если слишком мало жителей
+        if (people_.getCountrymen() < 343) {
+            std::cout << GAME_OVER_BECAUSE_DIES << std::endl;
+            throw GameOver();
+        }
+        
+        // если слишком много денег осталось в казне
+        if (account_.getBalance() / 100 > 5 && this->died_count_ - this->died_because_of_pollution_ >= 2) {
+            std::cout << GAME_OVER_BECAUSE_BALANCE << std::endl;
+            throw GameOver();
+        }
+        
+        // если слишком много иностранцев
+        if (people_.getForeigners() > people_.getCountrymen()) {
+            std::cout << GAME_OVER_BECAUSE_FOREINERS << std::endl;
+            throw GameOver();
+        }
+        
+        // победа в игре
+        if (year_ == 7) {
+            std::cout << GAME_OVER_SUCCESS;
+            throw GameOver();
+        }
     }
     
     short year_ = 0;
     Land land_;
     People people_;
     Account account_;
+    NextYearParams next_year_params_;
     int died_count_ = 0;    // в другой класс?
-    int last_year_tourists_revenue = 0;
+    int died_because_of_pollution_ = 0;
+    int last_year_tourists_revenue_ = 0;
 };

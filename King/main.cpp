@@ -11,32 +11,14 @@
 #include <functional>
 #include "utils.hpp"
 #include "strings.hpp"
-#include "constants.h"
 #include "events.hpp"
+#include "exceptions.hpp"
+#include "Game.cpp"
 
 #ifdef _WIN32
 #include <Windows.h>
 #endif
 
-
-struct GameResult {
-    int years;
-    int balance;
-    int countrymen;
-};
-
-template <>
-struct std::hash<GameResult> {
-    size_t operator()(const GameResult& obj) const {
-        size_t hashValue = (
-                            std::hash<int>()(obj.years) << 1)
-                            ^ (std::hash<int>()(obj.balance) << 2)
-                            ^ ((std::hash<int>()(obj.countrymen)) << 3)
-                            ^ (std::hash<std::string>()("dialas")
-                               );
-        return hashValue;
-    }
-};
 
 class GameState {
 private:
@@ -611,50 +593,66 @@ int main(int argc, const char * argv[]) {
 
     while (true) {
         
+//        try {
+//
+//            GameState game = GameState();
+//            game.printHeader();
+//
+//            // показывать ли инструкцию
+//            std::cout << QUESTION_ABOUT_INTRO;
+//            int choise_intro = get_valid_integer_input(1, 2, false);
+//            if (choise_intro == 1) {
+//                game.printIntro();
+//            }
+//
+//            // игра с нуля или вводим стартовые значения
+//            std::cout << QUESTION_ABOUT_GAME_MODE;
+//            int choise_mode = get_valid_integer_input(1, 2, false);
+//            if (choise_mode == 2) {
+//                game.getResumeDataFromUser();
+//            }
+//
+//            // игра со случайными событиями или без
+//            std::cout << QUESTION_ABOUT_RANDOM_EVENTS;
+//            int choise_random = get_valid_integer_input(1, 2, false);
+//            if (choise_random == 1) {
+//                game.enableRandomEvents();
+//            }
+//
+//            while (true) {
+//                game.initNewYear();
+//                game.printState();
+//                game.getYearDecisionsFromUser();
+//
+//                game.processYear();
+//                bool is_game_over = game.countYearResults();
+//        //        game.print_state();
+//                if (is_game_over) {
+//                    std::cout << "Нажмите любоую клавишу, чтобы закрыть окно." << std::endl;
+//                    std::cin.get();
+//                    return 0;
+//                }
+//            }
+//        } catch (ExitGame& e) {
+//            return 0;
+//        } catch (RestartGame& e) {
+//            continue;
+//        }
+        
         try {
-    
-            GameState game = GameState();
+            Game game = Game();
             game.printHeader();
-
-            // показывать ли инструкцию
-            std::cout << QUESTION_ABOUT_INTRO;
-            int choise_intro = get_valid_integer_input(1, 2, false);
-            if (choise_intro == 1) {
-                game.printIntro();
-            }
-
-            // игра с нуля или вводим стартовые значения
-            std::cout << QUESTION_ABOUT_GAME_MODE;
-            int choise_mode = get_valid_integer_input(1, 2, false);
-            if (choise_mode == 2) {
-                game.getResumeDataFromUser();
-            }
-
-            // игра со случайными событиями или без
-            std::cout << QUESTION_ABOUT_RANDOM_EVENTS;
-            int choise_random = get_valid_integer_input(1, 2, false);
-            if (choise_random == 1) {
-                game.enableRandomEvents();
-            }
-
             while (true) {
-                game.initNewYear();
-                game.printState();
-                game.getYearDecisionsFromUser();
-
                 game.processYear();
-                bool is_game_over = game.countYearResults();
-        //        game.print_state();
-                if (is_game_over) {
-                    std::cout << "Нажмите любоую клавишу, чтобы закрыть окно." << std::endl;
-                    std::cin.get();
-                    return 0;
-                }
             }
+            
         } catch (ExitGame& e) {
             return 0;
         } catch (RestartGame& e) {
             continue;
+        } catch (GameOver& e) {
+            std::cout << "Game Over" << std::endl;
+            break;
         }
     }
 }

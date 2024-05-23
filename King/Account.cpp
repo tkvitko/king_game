@@ -6,6 +6,11 @@
 //
 
 #include "Account.hpp"
+#ifndef land_cpp
+#define land_cpp
+#include "Land.cpp"
+#endif /* land_cpp */
+
 
 class Account {
 public:
@@ -23,6 +28,7 @@ public:
     int getPriceOfSellingLand() { return price_of_selling_land_; }
     int getPriceOfPlantingLand() { return price_of_planting_land_; }
     int getAmountSpentOnPollutonControl() {return spent_on_pollution_control_;}
+    double getPriceOfLivingMultiplyingFactor() { return price_of_living_multiplying_factor_; }
 //    int getAmountSpentOnCountrymen() {return spent_on_countrymen_;}
 //    int getPriceOfLiving() {return price_of_living_;}
     
@@ -34,7 +40,7 @@ public:
         price_of_selling_land_ = price_of_selling_land;
         price_of_planting_land_ = price_of_planting_land;
         price_for_cutting_down_forest_ = price_for_cutting_down_forest;
-        price_of_living_ = price_of_living;
+        price_of_living_ = price_of_living * price_of_living_multiplying_factor_;
     }
     
     void sellFarmToIndustry(int square) {
@@ -62,18 +68,22 @@ public:
         balance_ -= square * price_for_cutting_down_forest_;
     }
     
-    void spendMoneyToFuneral(int amount, Land land, Account account) {
+    void spendMoneyToFuneral(int amount, Land& land) {
         if (amount < balance_) {
             balance_ -= amount;
         } else {
             int diff = amount - balance_;
             balance_ = 0;
-            land.sellFarmToIndustry(diff / account.getPriceOfSellingLand())
+            land.sellFarmToIndustry(diff / getPriceOfSellingLand());
         }
     }
     
     void add_money(int amount) {
         balance_ += amount;
+    }
+    
+    void setPriceOfLivingMultiplyingFactor(double factor) {
+        price_of_living_multiplying_factor_ = factor;
     }
     
 private:
@@ -86,6 +96,7 @@ private:
     int price_of_planting_land_ = 0;
     int price_for_cutting_down_forest_ = 0;
     int price_of_living_ = 0;
+    double price_of_living_multiplying_factor_ = 1.0;
     
     // решения
     int spent_on_countrymen_  = 0;

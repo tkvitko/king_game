@@ -7,6 +7,7 @@
 
 #include "Land.hpp"
 #include "utils.hpp"
+#include "exceptions.hpp"
 
 
 class Land {
@@ -31,8 +32,12 @@ public:
 
     void sellFarmToIndustry(int square) {
         // продажа сельской земли под промышленность
-        farm_square_ -= square;
-        farm_square_sold_ += square;
+        if (square > farm_square_) {
+            throw GameOver();
+        } else {
+            farm_square_ -= square;
+            farm_square_sold_ += square;
+        }
     }
     
     void setHarvestMutliplyingFactor(double factor) {

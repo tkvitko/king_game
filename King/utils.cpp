@@ -11,14 +11,8 @@
 #include <chrono>
 #include <thread>
 #include "utils.hpp"
+#include "exceptions.hpp"
 
-const char* RestartGame::what() const noexcept {
-    return "Перезапуск игры";
-};
-
-const char* ExitGame::what() const noexcept {
-    return "Выход из игры";
-};
 
 short get_random_choise(short choises_number, short probability) {
     // Функция вернет выпавший вариант в соответствии с вероятностью выпадения
