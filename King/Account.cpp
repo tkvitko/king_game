@@ -9,15 +9,22 @@
 
 class Account {
 public:
+    Account() {};
     Account(int balance) : balance_(balance) {};
     
     // получение данных
     int getBalance() { return balance_;}
     bool isBalanceEnoughToPlantLand(int square) { return square * price_of_planting_land_ < balance_; }
     
-    int getPeopleHasEnoughtToLive() {
+    int getCountOfPeopleHasEnoughtToLive() {
         return spent_on_countrymen_ / price_of_living_;
     }
+    
+    int getPriceOfSellingLand() { return price_of_selling_land_; }
+    int getPriceOfPlantingLand() { return price_of_planting_land_; }
+    int getAmountSpentOnPollutonControl() {return spent_on_pollution_control_;}
+//    int getAmountSpentOnCountrymen() {return spent_on_countrymen_;}
+//    int getPriceOfLiving() {return price_of_living_;}
     
     // изменение данных
     
@@ -55,8 +62,22 @@ public:
         balance_ -= square * price_for_cutting_down_forest_;
     }
     
+    void spendMoneyToFuneral(int amount, Land land, Account account) {
+        if (amount < balance_) {
+            balance_ -= amount;
+        } else {
+            int diff = amount - balance_;
+            balance_ = 0;
+            land.sellFarmToIndustry(diff / account.getPriceOfSellingLand())
+        }
+    }
+    
+    void add_money(int amount) {
+        balance_ += amount;
+    }
+    
 private:
-    int balance_;
+    int balance_ = 60000;
     
     // данные конкретного года
     

@@ -11,6 +11,7 @@
 
 class Land {
 public:
+    Land() {};
     Land(int farm_square, int forest_square) : farm_square_(farm_square), forest_square_(forest_square) {};
 
     // получение данных
@@ -19,6 +20,7 @@ public:
     int getTotalSquare() { return farm_square_ + forest_square_; }
     int getPlantedSquare() { return farm_square_planted_; }
     int getSoldSquare() { return farm_square_sold_; }
+    int getHarvestedSquare() { return farm_square_harvested; }
 
     // изменение данных
     void cutDownForest(int square) {
@@ -60,8 +62,8 @@ public:
 
 private:
     // общие данные
-    int farm_square_ = 0;
-    int forest_square_ = 0;
+    int farm_square_ = 1000;
+    int forest_square_ = 1000;
     double harvest_multiplying_factor_ = 1.0;
     
     // данные конкретного года
