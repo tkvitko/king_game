@@ -270,9 +270,9 @@ public:
         Event bad_event_4 = Event("Из-за отмены любимого народом сериала граждане устроили недельную забастовку. Убытки составили 3500 ролодов.\n", bad_params_4);
         this->bad_events.push_back(bad_event_4);
         
-        std::vector<std::pair<ChangingField, int>> bad_params_5 = {std::pair<ChangingField, int>(ChangingField::balance_by_koef_per_countryman, -40)};
+        std::vector<std::pair<ChangingField, int>> bad_params_5 = {std::pair<ChangingField, int>(ChangingField::balance_by_koef_per_countryman, -20)};
 
-        Event bad_event_5 = Event("Согласно докладу учёного совета, повышенная солнечная активность привела к усилению головных болей у населения. Вышеназванный совет уже  разработал специальные шапочки из сверхсекретного сплава для нейтрализации влияния излучения . Их производство и закупка обошлись в 40 ролодов на каждого жителя.\n", bad_params_5);
+        Event bad_event_5 = Event("Согласно докладу учёного совета, повышенная солнечная активность привела к усилению головных болей у населения. Вышеназванный совет уже  разработал специальные шапочки из сверхсекретного сплава для нейтрализации влияния излучения . Их производство и закупка обошлись в 20 ролодов на каждого жителя.\n", bad_params_5);
         this->bad_events.push_back(bad_event_5);
         
         std::vector<std::pair<ChangingField, int>> bad_params_6 = {std::pair<ChangingField, int>(ChangingField::balance, -13000)};

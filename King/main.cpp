@@ -260,6 +260,10 @@ private:
                                                    - ((this->sold_square) / 50 )
                                                    - this->died_count / 2 );
         
+        if (this->countrymen + countrymen_change < 0) {
+            countrymen_change = this->countrymen;
+        }
+        
         if (countrymen_change != 0) {
             std::cout << "Население изменилось: ";
             if (countrymen_change < 0) {
@@ -407,7 +411,7 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.5\n\n\n" << std::endl;
+        std::cout << "Version 1.6.6\n\n\n" << std::endl;
     }
     
     void printIntro() {
@@ -652,8 +656,12 @@ int main(int argc, const char * argv[]) {
                 bool is_game_over = game.countYearResults();
         //        game.print_state();
                 if (is_game_over) {
-                    std::cout << "Нажмите любоую клавишу, чтобы закрыть окно." << std::endl;
-                    std::cin.get();
+                    std::cout << "Нажмите Enter, чтобы закрыть окно." << std::endl;
+                #ifdef OSisWindows
+                    system("pause");
+                #else
+                    system("read");
+                #endif
                     return 0;
                 }
             }
