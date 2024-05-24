@@ -39,13 +39,21 @@ public:
         countrymen_ += count;
     }
     
+    void setForeigners(int count) {
+        foreigners_ = count;
+    }
+    
     void setForeignersChange(int count) {
         foreigners_change_ = count;
         foreigners_ += count;
     }
     
-    void setTourismMultiplyingFactor(double factor) {
-        tourism_multiplying_factor = factor;
+    void increaseTourismMultiplyingFactor(double value) {
+        tourism_multiplying_factor += value;
+    }
+    
+    void resetTourismMultiplyingFactor() {
+        tourism_multiplying_factor = 1.0;
     }
 
     

@@ -22,6 +22,7 @@ public:
     int getPlantedSquare() { return farm_square_planted_; }
     int getSoldSquare() { return farm_square_sold_; }
     int getHarvestedSquare() { return farm_square_harvested; }
+    double getHarvestMultiplyingFactor() { return harvest_multiplying_factor_; }
 
     // изменение данных
     void cutDownForest(int square) {
@@ -40,8 +41,8 @@ public:
         }
     }
     
-    void setHarvestMutliplyingFactor(double factor) {
-        harvest_multiplying_factor_ = factor;
+    void increaseHarvestMutliplyingFactor(double factor) {
+        harvest_multiplying_factor_ += factor;
     }
     
     void resetHarvestMutliplyingFactor() {

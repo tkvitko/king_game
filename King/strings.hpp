@@ -15,6 +15,7 @@ const std::string QUESTION_ABOUT_INTRO = "Показать инструкцию 
 const std::string QUESTION_ABOUT_GAME_MODE = "Хотите сыграть обычную игру (1) или настроить вручную стартовые параметры (2)? ";
 const std::string QUESTION_ABOUT_RANDOM_EVENTS = "Хотите играть со случайными событиями (1) или без них (2)? ";
 
+const std::string HEADER = "\n### СРОЧНО НУЖЕН ПРЕМЬЕР-МИНИСТР! ###\n\n(на основе игры The King, опубликованной в Basic Computer Games в 1978)\nAuthor: @taraskvitko\nPowered by Dialas\nVersion 1.6.5\n\n\n";
 
 const std::string INTRO_PART_1 = "Поздравляем! Вас только что избрали премьер-министром Сетац Детину - маленького коммунистического острова размером 30 на 70 миль. Ваша задача - управлять бюджетом страны и распределять деньги из общественной казны. Денежная единица - роллод, и каждому жителю нужно ";
 

@@ -30,7 +30,7 @@ public:
     int getAmountSpentOnPollutonControl() {return spent_on_pollution_control_;}
     double getPriceOfLivingMultiplyingFactor() { return price_of_living_multiplying_factor_; }
 //    int getAmountSpentOnCountrymen() {return spent_on_countrymen_;}
-//    int getPriceOfLiving() {return price_of_living_;}
+    int getPriceOfLiving() {return price_of_living_;}
     
     // изменение данных
     
@@ -82,8 +82,12 @@ public:
         balance_ += amount;
     }
     
-    void setPriceOfLivingMultiplyingFactor(double factor) {
-        price_of_living_multiplying_factor_ = factor;
+    void increasePriceOfLivingMultiplyingFactor(double factor) {
+        price_of_living_multiplying_factor_ += factor;
+    }
+    
+    void resetPriceOfLivingMultiplyingFactor() {
+        price_of_living_multiplying_factor_ = 1.0;
     }
     
 private:

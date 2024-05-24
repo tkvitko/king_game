@@ -9,9 +9,9 @@
 #include <vector>
 #include <algorithm>
 #include "Game.hpp"
-
+#include "GameResult.cpp"
+#include "events.hpp"
 #include "constants.h"
-
 
 #ifndef land_cpp
 #define land_cpp
@@ -39,27 +39,6 @@ private:
 };
 
 
-struct GameResult {
-    int years;
-    int balance;
-    int countrymen;
-};
-
-
-template <>
-struct std::hash<GameResult> {
-    size_t operator()(const GameResult& obj) const {
-        size_t hashValue = (
-                            std::hash<int>()(obj.years) << 1)
-                            ^ (std::hash<int>()(obj.balance) << 2)
-                            ^ ((std::hash<int>()(obj.countrymen)) << 3)
-                            ^ (std::hash<std::string>()("dialas")
-                               );
-        return hashValue;
-    }
-};
-
-
 class Game {
 public:
     
@@ -78,25 +57,43 @@ public:
     int PRICE_OF_FUNERAL = 9;
     int POLLUTION_CONTROL_FACTOR = 25;
     
-    Game() {
+    Game(bool custom_game, bool random_events_enabled) {
         // инициализация новой игры
         
-        land_ = Land(1000, 1000);
-        people_ = People(get_random_short_from_range(START_COUNTRYMAN_MIN, START_COUNTRYMAN_MAX));
-        account_ = Account(get_random_short_from_range(START_BALANCE_MIN, START_BALANCE_MAX));
+        custom_game_ = custom_game;
+        random_events_enabled_ = random_events_enabled;
+        
+        if (!custom_game_) {
+            land_ = Land(1000, 1000);
+            people_ = People(get_random_short_from_range(START_COUNTRYMAN_MIN, START_COUNTRYMAN_MAX));
+            account_ = Account(get_random_short_from_range(START_BALANCE_MIN, START_BALANCE_MAX));
+            
+        } else {
+            // задать пользователю вопросы по старту игры и запустить игру
+            
+            std::cout << "С какого года правления вы хотите начать игру? ";
+            int years = get_valid_integer_input(0, 8, false);
+            std::cout << "Сколько у вас в казне? ";
+            int balance = get_valid_integer_input(0, 500000, false);
+            std::cout << "Сколько жителей? ";
+            int countrymen = get_valid_integer_input(1, 2000, false);
+            std::cout << "Сколько иностранных рабочих? ";
+            int foreigners = get_valid_integer_input(0, 2000, false);
+            std::cout << "Сколько квадратных миль сельхоз земли? ";
+            int farm_land = get_valid_integer_input(0, 2000, false);
+            std::cout << "Сколько квадратных миль леса? ";
+            int forest_land = get_valid_integer_input(0, 2000, false);
+            
+            land_ = Land(farm_land, forest_land);
+            people_ = People(countrymen);
+            account_ = Account(balance);
+            year_ = years - 1;
+            people_.setForeigners(foreigners);
+        }
+        
     };
     
-    void printHeader() {
-        // вывести приветствие
-        
-        std::cout << "\n### СРОЧНО НУЖЕН ПРЕМЬЕР-МИНИСТР! ###\n" << std::endl;
-        std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
-        std::cout << "Author: @taraskvitko" << std::endl;
-        std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.5\n\n\n" << std::endl;
-    }
-    
-    void printState() {
+    void showStateOnYearStart() {
         // вывести состояние игры
         
         std::cout << year_ << " год правления" << std::endl;
@@ -122,33 +119,37 @@ public:
     }
     
     void processYear() {
-        // начать новый год
+        // провести новый год
         
         year_ += 1;
+        // установка новых цен
         account_.setPrices(get_random_short_from_range(PRICE_OF_SELLING_LAND_MIN, PRICE_OF_SELLING_LAND_MAX),
                            get_random_short_from_range(PRICE_OF_PLANTING_LAND_MIN, PRICE_OF_PLANTING_LAND_MAX),
                            PRICE_OF_CUTTING_DONW_FOREST,
                            PRICE_OF_LIVING);
         
-        printState();
+        // статус и получение ответов игрока
+        showStateOnYearStart();
         getYearDecisionsFromUser();
-
+        
+        // случайные события
+        if (random_events_enabled_) { process_random_events_(); }
+        
+        // рассчеты по итогам решений игрока и случайных событий
         countDeaths_();
         countPeople_();
         countHarvest_();
         countTourists_();
         
-        ShowCurrentState_();
+        // проверка, не окончена ли игра
+        ShowStateOnYearEnd();
         checkIfGameOver_();
         
-        // применить изменение населения на следующий год
+        // применить изменения на следующий год
         people_.increase(next_year_params_.getCountrymanChange());
-        
         next_year_params_.setCountrymanChange(0);
-        account_.setPriceOfLivingMultiplyingFactor(1.0);
+        account_.resetPriceOfLivingMultiplyingFactor();
     }
-    
-    
     
 private:
     
@@ -298,7 +299,7 @@ private:
             std::cout << "Урожай не принёс дохода" << std::endl;
         }
 //        this->last_year_lost_farm_land = lost_farm_land;
-        land_.setHarvestMutliplyingFactor(1.0);
+        land_.resetHarvestMutliplyingFactor();
     }
     
     void countTourists_() {
@@ -337,10 +338,10 @@ private:
         }
         last_year_tourists_revenue_ = revenue;
         account_.add_money(revenue);
-        people_.setTourismMultiplyingFactor(1.0);
+        people_.resetTourismMultiplyingFactor();
     }
     
-    void ShowCurrentState_() {
+    void ShowStateOnYearEnd() {
         std::cout << "\nТекущее состояние игры: " << year_ << " год правления, " << account_.getBalance() << " роллодов в казне, " << people_.getCountrymen() << " жителей" << std::endl;
         GameResult resut = GameResult{
             year_,
@@ -395,11 +396,76 @@ private:
         }
     }
     
+    void process_random_events_() {
+        // ежемесячные случайные события
+            YearEvents year_events = YearEvents();
+            for (size_t i = 0; i < 12; ++i) {
+                std::cout << "...идёт месяц " << i + 1 << std::endl;
+                monthType month_type = year_events.monthes[i];
+                
+                switch(month_type) {
+                    case monthType::GOOD:{
+                        Event event = events.popLastEvent(EventType::good);
+                        processEvent_(event);}
+                        break;
+                    case monthType::BAD:{
+                        Event event = events.popLastEvent(EventType::bad);
+                        processEvent_(event);}
+                        break;
+                    case monthType::QUIZ:{
+                        Quiz quiz = quizes.pop_last_quiz();
+                        playQuiz_(quiz);}
+                        break;
+                    case monthType::EMPTY:
+                        break;
+                }
+            }
+
+    }
+    
+    void processEvent_(Event event) {
+        std::cout << event.text;
+        account_.add_money(event.change_balance);
+        account_.add_money(event.change_balance_by_koef_per_countryman * people_.getCountrymen());
+        people_.increase(event.change_countryman);
+        people_.increase(event.change_countryman_by_koef_per_countrymen * people_.getCountrymen() / 100);
+        next_year_params_.setCountrymanChange(event.change_countryman_next_year);
+        
+        people_.increaseTourismMultiplyingFactor(static_cast<double>(event.change_tourism_percentage) / 100);
+        land_.increaseHarvestMutliplyingFactor(static_cast<double>(event.change_harvest_percentage) / 100);
+        account_.increasePriceOfLivingMultiplyingFactor(static_cast<double>(event.change_cost_of_life_percentage) / 100);
+
+        std::cout << "После этого события:" << "\nКазна: " << account_.getBalance() << "\nНаселение: " << people_.getCountrymen() << "\nКоэффициент туризма в следующем году: " << people_.getTourismMultiplyingFactor() << "\nКоэффициент урожая в следующем году: " << land_.getHarvestMultiplyingFactor() << "\nКоэффициент стоимости жизни в следующем году: " << account_.getPriceOfLivingMultiplyingFactor() << "\nИзменение населения в следующем году: " << next_year_params_.getCountrymanChange() << std::endl;
+        
+    }
+    
+    void playQuiz_(Quiz quize) {
+        std::cout << quize.question << std::endl;
+        int decision = get_valid_integer_input(1, 2, false);
+        if (decision == 1) {
+            std::cout << quize.neutral_answer;
+        } else {
+            short event_type = get_random_choise(2, 50);
+            if (event_type == 1) {
+                this->processEvent_(quize.good_event);
+            } else {
+                this->processEvent_(quize.bad_event);
+            }
+            event_type = 0;
+        }
+    }
+    
+    bool custom_game_;
+    bool random_events_enabled_ = false;
+    
     short year_ = 0;
     Land land_;
     People people_;
     Account account_;
     NextYearParams next_year_params_;
+    Events events = Events();
+    Quizes quizes = Quizes();
+    
     int died_count_ = 0;    // в другой класс?
     int died_because_of_pollution_ = 0;
     int last_year_tourists_revenue_ = 0;
