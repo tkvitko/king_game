@@ -54,11 +54,12 @@ private:
     int start_balance_max = 61000;
     int start_contrymen_min = 490;
     int start_contrymen_max = 510;
-    int price_for_cutting_down_forest = 10;
+    int price_for_cutting_down_forest = 0;
     
     // режим
     bool custom_game = false;    // обычный режим игры без ввода стартовых данных пользователем
     bool random_events_enabled = false; // игра без случайных ивентов
+    bool competition = false;    // выводить ли данные для участия в конкурсе
     
     // время
     unsigned short years = 0;  // лет правления
@@ -365,7 +366,7 @@ private:
         this->harvest_multiplying_factor += static_cast<double>(event.change_harvest_percentage) / 100;
         this->next_year_cost_of_life_multiplying_factor += static_cast<double>(event.change_cost_of_life_percentage) / 100;
         
-        std::cout << "После этого события:" << "\nКазна: " << this->balance << "\nНаселение: " << this->countrymen << "\nКоэффициент туризма в следующем году: " << this->tourism_multiplying_factor << "\nКоэффициент урожая в следующем году: " << this->harvest_multiplying_factor << "\nКоэффициент стоимости жизни в следующем году: " << this->next_year_cost_of_life_multiplying_factor << "\nИзменение населения в следующем году: " << this->next_year_countrymen << std::endl;
+//        std::cout << "После этого события:" << "\nКазна: " << this->balance << "\nНаселение: " << this->countrymen << "\nКоэффициент туризма в следующем году: " << this->tourism_multiplying_factor << "\nКоэффициент урожая в следующем году: " << this->harvest_multiplying_factor << "\nКоэффициент стоимости жизни в следующем году: " << this->next_year_cost_of_life_multiplying_factor << "\nИзменение населения в следующем году: " << this->next_year_countrymen << std::endl;
         
     }
     
@@ -411,7 +412,9 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.6\n\n\n" << std::endl;
+        std::cout << "Version 1.6.7" << std::endl;
+        std::cout << "Спасибо за тесты Алику Гаджимурадову, Никите Цековцу, Enola\n" << std::endl;
+        std::cout << "Команды:\n- restart - перезапуск игры\n- exit    - выход из игры\n\n\n";
     }
     
     void printIntro() {
@@ -448,6 +451,10 @@ public:
     
     void enableRandomEvents() {
         this->random_events_enabled = true;
+    }
+    
+    void enableCompetition() {
+        this->competition = true;
     }
     
     void initSpeciphicYear(short years, int balance, int countrymen, int foreigners, int farm_land, int forest_land) {
@@ -539,14 +546,16 @@ public:
         // вычислить результаты года
         
         std::cout << "\nТекущее состояние игры: " << this->years << " год правления, " << this->balance << " роллодов в казне, " << this->countrymen << " жителей" << std::endl;
-        GameResult resut = GameResult{
-            this->years,
-            this->balance,
-            this->countrymen};
-        std::hash<GameResult> hashFunction;
-
-        auto year_hash = hashFunction(resut);
-        std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << this->years << "," << this->balance << "," << this->countrymen << "\n***" << std::endl;
+        
+        if (this->competition) {
+            GameResult resut = GameResult{
+                this->years,
+                this->balance,
+                this->countrymen};
+            std::hash<GameResult> hashFunction;
+            auto year_hash = hashFunction(resut);
+            std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << this->years << "," << this->balance << "," << this->countrymen << "\n***" << std::endl;
+        }
         
         // если не хватило земли по итогам продажи для компенсации затрат на похороны:
         if (this->farm_land < 0) {
@@ -645,6 +654,13 @@ int main(int argc, const char * argv[]) {
             int choise_random = get_valid_integer_input(1, 2, false);
             if (choise_random == 1) {
                 game.enableRandomEvents();
+            }
+            
+            // игра с текстом для конкурса или нет
+            std::cout << QUESTION_ABOUT_COMPETITION;
+            int choise_competition = get_valid_integer_input(1, 2, false);
+            if (choise_competition == 1) {
+                game.enableCompetition();
             }
 
             while (true) {
