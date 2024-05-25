@@ -22,7 +22,7 @@ public:
     int getTotalSquare() { return farm_square_ + forest_square_; }
     int getPlantedSquare() { return farm_square_planted_; }
     int getSoldSquare() { return farm_square_sold_; }
-    int getHarvestedSquare() { return farm_square_harvested; }
+    int getHarvestedSquare() { return farm_square_harvested_; }
     double getHarvestMultiplyingFactor() { return harvest_multiplying_factor_; }
 
     // изменение данных
@@ -56,17 +56,24 @@ public:
         if (square > farm_square_) {
             square = farm_square_;
         };
-        farm_square_planted_ += square;
+        farm_square_planted_ = square;
+    }
         
+    void harvest() {
         // сбор урожая
         // потеря урожая из-за промышленности
         short lost_farm_land = static_cast<int>(farm_square_sold_ * (getRandomFloatFromZeroToOne_() + 1.5) / 2);
         if (lost_farm_land > farm_square_planted_) {
             lost_farm_land = farm_square_planted_;
         }
-        farm_square_harvested = farm_square_planted_ - lost_farm_land;
-        farm_square_harvested *= harvest_multiplying_factor_;
+        farm_square_harvested_ = farm_square_planted_ - lost_farm_land;
+        farm_square_harvested_ *= harvest_multiplying_factor_;
     }
+    
+//    void resetPlanted() {
+//        farm_square_planted_ = 0;
+//        farm_square_harvested_ = 0;
+//    }
 
 private:
     // общие данные
@@ -76,6 +83,6 @@ private:
     
     // данные конкретного года
     int farm_square_planted_ = 0;
-    int farm_square_harvested = 0;
+    int farm_square_harvested_ = 0;
     int farm_square_sold_ = 0;
 };

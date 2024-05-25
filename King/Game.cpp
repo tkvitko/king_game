@@ -51,7 +51,7 @@ public:
     int PRICE_OF_SELLING_LAND_MAX = 105;
     int PRICE_OF_PLANTING_LAND_MIN = 10;
     int PRICE_OF_PLANTING_LAND_MAX = 15;
-    int PRICE_OF_CUTTING_DONW_FOREST = 10;
+    int PRICE_OF_CUTTING_DOWN_FOREST = 10;
 
     int PRICE_OF_LIVING = 100;
     int PRICE_OF_FUNERAL = 9;
@@ -126,7 +126,7 @@ public:
         // установка новых цен
         account_.setPrices(get_random_short_from_range(PRICE_OF_SELLING_LAND_MIN, PRICE_OF_SELLING_LAND_MAX),
                            get_random_short_from_range(PRICE_OF_PLANTING_LAND_MIN, PRICE_OF_PLANTING_LAND_MAX),
-                           PRICE_OF_CUTTING_DONW_FOREST,
+                           PRICE_OF_CUTTING_DOWN_FOREST,
                            PRICE_OF_LIVING);
         
         // статус и получение ответов игрока
@@ -304,6 +304,7 @@ private:
     
     void countHarvest_() {
         // подсчет урожая
+        land_.harvest();
         std::cout << "С " << land_.getPlantedSquare() << " квадратных миль засеянной земли вы собрали " << land_.getHarvestedSquare() << " квадратных миль урожая" << std::endl;
         
         // причины потери урожая
@@ -466,7 +467,7 @@ private:
         land_.increaseHarvestMutliplyingFactor(static_cast<double>(event.change_harvest_percentage) / 100);
         account_.increasePriceOfLivingMultiplyingFactor(static_cast<double>(event.change_cost_of_life_percentage) / 100);
 
-        std::cout << "После этого события:" << "\nКазна: " << account_.getBalance() << "\nНаселение: " << people_.getCountrymen() << "\nКоэффициент туризма в следующем году: " << people_.getTourismMultiplyingFactor() << "\nКоэффициент урожая в следующем году: " << land_.getHarvestMultiplyingFactor() << "\nКоэффициент стоимости жизни в следующем году: " << account_.getPriceOfLivingMultiplyingFactor() << "\nИзменение населения в следующем году: " << next_year_params_.getCountrymanChange() << std::endl;
+        std::cout << "После этого события:" << "\nКазна: " << account_.getBalance() << "\nНаселение: " << people_.getCountrymen() << "\nКоэффициент туризма в этом году: " << people_.getTourismMultiplyingFactor() << "\nКоэффициент урожая в этом году: " << land_.getHarvestMultiplyingFactor() << "\nКоэффициент стоимости жизни в следующем году: " << account_.getPriceOfLivingMultiplyingFactor() << "\nИзменение населения в следующем году: " << next_year_params_.getCountrymanChange() << std::endl;
         
     }
     
