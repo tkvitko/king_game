@@ -63,6 +63,6 @@ private:
     int population_change_ = 0;
     int foreigners_change_ = 0;
     
-    int square_countryman_can_plant_ = 0;
+    int square_countryman_can_plant_ = 2;
     double tourism_multiplying_factor = 1.0;
 };
