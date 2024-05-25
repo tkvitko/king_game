@@ -57,11 +57,12 @@ public:
     int PRICE_OF_FUNERAL = 9;
     int POLLUTION_CONTROL_FACTOR = 25;
     
-    Game(bool custom_game, bool random_events_enabled) {
+    Game(bool custom_game, bool random_events_enabled, bool competition) {
         // инициализация новой игры
         
         custom_game_ = custom_game;
         random_events_enabled_ = random_events_enabled;
+        competition_ = competition;
         
         if (!custom_game_) {
             land_ = Land(1000, 1000);
@@ -370,14 +371,17 @@ private:
     
     void ShowStateOnYearEnd() {
         std::cout << "\nТекущее состояние игры: " << year_ << " год правления, " << account_.getBalance() << " роллодов в казне, " << people_.getCountrymen() << " жителей" << std::endl;
-        GameResult resut = GameResult{
-            year_,
-            account_.getBalance(),
-            people_.getCountrymen()};
-        std::hash<GameResult> hashFunction;
+        
+        if (competition_) {
+            GameResult resut = GameResult{
+                year_,
+                account_.getBalance(),
+                people_.getCountrymen()};
+            std::hash<GameResult> hashFunction;
 
-        auto year_hash = hashFunction(resut);
-        std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << year_ << "," << account_.getBalance() << "," << people_.getCountrymen() << "\n***" << std::endl;
+            auto year_hash = hashFunction(resut);
+            std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << year_ << "," << account_.getBalance() << "," << people_.getCountrymen() << "\n***" << std::endl;
+        }
     }
     
     void checkIfGameOver_() {
@@ -462,7 +466,7 @@ private:
         land_.increaseHarvestMutliplyingFactor(static_cast<double>(event.change_harvest_percentage) / 100);
         account_.increasePriceOfLivingMultiplyingFactor(static_cast<double>(event.change_cost_of_life_percentage) / 100);
 
-        std::cout << "После этого события:" << "\nКазна: " << account_.getBalance() << "\nНаселение: " << people_.getCountrymen() << "\nКоэффициент туризма в следующем году: " << people_.getTourismMultiplyingFactor() << "\nКоэффициент урожая в следующем году: " << land_.getHarvestMultiplyingFactor() << "\nКоэффициент стоимости жизни в следующем году: " << account_.getPriceOfLivingMultiplyingFactor() << "\nИзменение населения в следующем году: " << next_year_params_.getCountrymanChange() << std::endl;
+//        std::cout << "После этого события:" << "\nКазна: " << account_.getBalance() << "\nНаселение: " << people_.getCountrymen() << "\nКоэффициент туризма в следующем году: " << people_.getTourismMultiplyingFactor() << "\nКоэффициент урожая в следующем году: " << land_.getHarvestMultiplyingFactor() << "\nКоэффициент стоимости жизни в следующем году: " << account_.getPriceOfLivingMultiplyingFactor() << "\nИзменение населения в следующем году: " << next_year_params_.getCountrymanChange() << std::endl;
         
     }
     
@@ -484,6 +488,7 @@ private:
     
     bool custom_game_;
     bool random_events_enabled_ = false;
+    bool competition_ = false;
     
     short year_ = 0;
     Land land_;

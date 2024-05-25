@@ -54,7 +54,15 @@ int main(int argc, const char * argv[]) {
                 random_events_enabled = true;
             }
             
-            Game game = Game(custom_game, random_events_enabled);
+            // игра с текстом для конкурса или нет
+            bool competition = false;
+            std::cout << QUESTION_ABOUT_COMPETITION;
+            int choise_competition = get_valid_integer_input(1, 2, false);
+            if (choise_competition == 1) {
+                competition = true;
+            }
+            
+            Game game = Game(custom_game, random_events_enabled, competition);
             while (true) {
                 game.processYear();
             }
