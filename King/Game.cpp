@@ -349,7 +349,7 @@ private:
         } else {
             std::cout << "Туристы не принесли дохода" << std::endl;
         }
-        if (koef_2 != 0 && !(koef_1 - koef_2 >= last_year_tourists_revenue_)) {
+        if (koef_2 != 0 && !(koef_1 - koef_2 >= last_year_tourists_revenue_) && land_.getSoldSquare() > 0) {
             std::cout << "Поток туристов уменьшился, потому что ";
             short reason = get_random_choise(5, 20);
             if (reason == 1) {
