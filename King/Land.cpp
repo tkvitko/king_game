@@ -39,7 +39,7 @@ public:
             throw GameOver();
         } else {
             farm_square_ -= square;
-            farm_square_sold_ += square;
+            farm_square_sold_ = square;
         }
     }
     
