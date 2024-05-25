@@ -73,7 +73,8 @@ int main(int argc, const char * argv[]) {
             continue;
         } catch (GameOver& e) {
             std::cout << "Game Over" << std::endl;
-            break;
+            system("pause");
+            return 0;
         }
     }
 }
