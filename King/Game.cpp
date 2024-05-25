@@ -163,47 +163,74 @@ private:
     
     void distributeMoneyToCountryman_() {
         // процесс распределения денег по жителям
-        std::cout << "Сколько роллодов вы отдадите своим жителям? ";
-        int amount = get_valid_integer_input(0, account_.getBalance(), true);
-        account_.spendMoneyToCountryman(amount);   // изменения бюджета
+        
+        if (account_.getBalance() > 0) {
+            std::cout << "Сколько роллодов вы отдадите своим жителям? ";
+            int amount = get_valid_integer_input(0, account_.getBalance(), true);
+            bool success = account_.spendMoneyToCountryman(amount);   // изменения бюджета
+            if (!success) {
+                std::cout << "Не хватает денег в казне";
+            }
+        }
     }
     
     void plantFarmLand_() {
         // процесс засева сельхоз земель
-        std::cout << "Сколько квадратных миль земли вы хотите засеять? ";
-        
+    
         std::vector<int> squares = {land_.getFarmSquare(),
             people_.getCountrymen() * people_.getSquareCountrymanCanPlant(),
             account_.getBalance() / account_.getPriceOfPlantingLand()};
         std::vector<int>::iterator result;
-        result = std::max_element(squares.begin(), squares.end());
+        result = std::min_element(squares.begin(), squares.end());
         
         int max_square_to_plant = *result;
-        int square = get_valid_integer_input(0, max_square_to_plant, true);
-        account_.plantFarmLand(square);  // изменения бюджета
-        land_.plantFarmLand(square);     // вспашка и сбор урожая
+        if (max_square_to_plant > 0) {
+            std::cout << "Сколько квадратных миль земли вы хотите засеять? ";
+            int square = get_valid_integer_input(0, max_square_to_plant, true);
+            bool success = account_.plantFarmLand(square);  // изменения бюджета
+            if (!success) {
+                std::cout << "Не хватает денег в казне";
+            } else {
+                land_.plantFarmLand(square);     // вспашка и сбор урожая
+            }
+        }
     }
     
     void spentMoneyToPollutionControl_() {
         // процесс вкладывания денег в контроль загрязнений
-        std::cout << "Сколько роллодов вы хотите потратить на контроль загрязнений? ";
-        int amount = get_valid_integer_input(0, account_.getBalance(), true);
-        account_.spendMoneyToPollutionControl(amount);
+        
+        if (account_.getBalance() > 0) {
+            std::cout << "Сколько роллодов вы хотите потратить на контроль загрязнений? ";
+            int amount = get_valid_integer_input(0, account_.getBalance(), true);
+            bool success = account_.spendMoneyToPollutionControl(amount);
+            if (!success) {
+                std::cout << "Не хватает денег в казне";
+            }
+        }
     }
     
     void cutDownForest_() {
         // процесс вырубки леса
-        std::cout << "Сколько квадратных миль леса вы хотите вырубить? ";
-        int square = get_valid_integer_input(0, land_.getForestSquare(), true);
         
-        if (square != 0) {
-            land_.cutDownForest(square);
-            account_.cutDownForest(square);
-            short deaths_when_cutting = get_random_choise(2, 50);
-            if (deaths_when_cutting == 1) {
-                int dead_count = people_.getCountrymen() * 0.1;
-                people_.decrease(dead_count);
-                std::cout << "Случилось несчастье при рубке! " << dead_count << " жителей завалило деревьями." << std::endl;
+        if (land_.getForestSquare() > 0 && account_.getMaxCuttingDownSquareOfForest() > 0) {
+            std::cout << "Сколько квадратных миль леса вы хотите вырубить? ";
+            int square = get_valid_integer_input(0,
+                                                 std::min(land_.getForestSquare(), account_.getMaxCuttingDownSquareOfForest()),
+                                                 true);
+            
+            if (square != 0) {
+                bool success = account_.cutDownForest(square);
+                if (!success) {
+                    std::cout << "Не хватает денег в казне";
+                } else {
+                    land_.cutDownForest(square);
+                    short deaths_when_cutting = get_random_choise(2, 50);
+                    if (deaths_when_cutting == 1) {
+                        int dead_count = people_.getCountrymen() * 0.1;
+                        people_.decrease(dead_count);
+                        std::cout << "Случилось несчастье при рубке! " << dead_count << " жителей завалило деревьями." << std::endl;
+                    }
+                }
             }
         }
     }

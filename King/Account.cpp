@@ -31,6 +31,7 @@ public:
     double getPriceOfLivingMultiplyingFactor() { return price_of_living_multiplying_factor_; }
 //    int getAmountSpentOnCountrymen() {return spent_on_countrymen_;}
     int getPriceOfLiving() {return price_of_living_;}
+    int getMaxCuttingDownSquareOfForest() { return balance_ / price_for_cutting_down_forest_; }
     
     // изменение данных
     
@@ -48,30 +49,47 @@ public:
         balance_ += square * price_of_selling_land_;
     }
     
-    void spendMoneyToCountryman(int amount) {
+    bool spendMoneyToCountryman(int amount) {
         // распределение денег населению
-        balance_ -= amount;
-        spent_on_countrymen_ = amount;
+        bool success = decrease_balance_(amount);
+        if (success) {
+            spent_on_countrymen_ = amount;
+            return true;
+        }
+        return false;
     }
     
-    void spendMoneyToPollutionControl(int amount) {
+    bool spendMoneyToPollutionControl(int amount) {
         // распределение денег населению
-        balance_ -= amount;
-        spent_on_pollution_control_ = amount;
+        bool success = decrease_balance_(amount);
+        if (success) {
+            spent_on_pollution_control_ = amount;
+            return true;
+        }
+        return false;
     }
     
-    void plantFarmLand(int square) {
-        balance_ -= square * price_of_planting_land_;
+    bool plantFarmLand(int square) {
+        bool success = decrease_balance_(square * price_of_planting_land_);
+        if (success) {
+            return true;
+        }
+        return false;
     }
     
-    void cutDownForest(int square) {
-        balance_ -= square * price_for_cutting_down_forest_;
+    bool cutDownForest(int square) {
+        bool success = decrease_balance_(square * price_for_cutting_down_forest_);
+        if (success) {
+            return true;
+        }
+        return false;
     }
     
     void spendMoneyToFuneral(int amount, Land& land) {
         if (amount < balance_) {
-            balance_ -= amount;
+            decrease_balance_(amount);
         } else {
+            std::cout << "В казне не хватает денег на похороны, придётся продать часть земли под промышленность." << std::endl;
             int diff = amount - balance_;
             balance_ = 0;
             land.sellFarmToIndustry(diff / getPriceOfSellingLand());
@@ -91,7 +109,7 @@ public:
     }
     
 private:
-    int balance_ = 60000;
+    unsigned int balance_ = 60000;
     
     // данные конкретного года
     
@@ -105,4 +123,12 @@ private:
     // решения
     int spent_on_countrymen_  = 0;
     int spent_on_pollution_control_ = 0;
+    
+    bool decrease_balance_(int amount) {
+        if (amount <= balance_) {
+            balance_ -= amount;
+            return true;
+        }
+        return false;
+    }
 };

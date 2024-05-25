@@ -5,6 +5,7 @@
 //  Created by tkvitko on 22.05.2024.
 //
 
+#include <iostream>
 #include "Land.hpp"
 #include "utils.hpp"
 #include "exceptions.hpp"
@@ -34,6 +35,7 @@ public:
     void sellFarmToIndustry(int square) {
         // продажа сельской земли под промышленность
         if (square > farm_square_) {
+            std::cout << "Не хватает земли для продажи." << std::endl;
             throw GameOver();
         } else {
             farm_square_ -= square;
