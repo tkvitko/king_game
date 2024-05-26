@@ -42,6 +42,7 @@ public:
         price_of_planting_land_ = price_of_planting_land;
         price_for_cutting_down_forest_ = price_for_cutting_down_forest;
         price_of_living_ = price_of_living * price_of_living_multiplying_factor_;
+        price_of_living_multiplying_factor_ = 1.0;
     }
     
     void sellFarmToIndustry(int square) {

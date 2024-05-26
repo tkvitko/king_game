@@ -37,9 +37,9 @@ public:
     int change_balance_by_koef_per_countryman = 0;
     int change_countryman_by_koef_per_countrymen = 0;
     
-    int change_tourism_percentage = 0;
-    int change_harvest_percentage = 0;
-    int change_cost_of_life_percentage = 0;
+    double change_tourism_percentage = 0;
+    double change_harvest_percentage = 0;
+    double change_cost_of_life_percentage = 0;
     
     Event() {};
     

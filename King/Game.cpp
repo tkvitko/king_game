@@ -149,7 +149,6 @@ public:
         // применить изменения на следующий год
         people_.increase(next_year_params_.getCountrymanChange());
         next_year_params_.setCountrymanChange(0);
-        account_.resetPriceOfLivingMultiplyingFactor();
     }
     
 private:
