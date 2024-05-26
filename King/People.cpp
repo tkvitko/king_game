@@ -20,7 +20,7 @@ public:
     int getPopulationChange() { return population_change_; }
     int getForeignersChange() { return foreigners_change_; }
     int getSettled() { return countrymen_ - population_change_; }
-    double getTourismMultiplyingFactor() { return tourism_multiplying_factor; }
+    double getTourismMultiplyingFactor() { return tourism_multiplying_factor_; }
     
     // изменение данных
     void decrease(int count) { countrymen_ -= count; }
@@ -49,11 +49,11 @@ public:
     }
     
     void increaseTourismMultiplyingFactor(double value) {
-        tourism_multiplying_factor += value;
+        tourism_multiplying_factor_ += value;
     }
     
     void resetTourismMultiplyingFactor() {
-        tourism_multiplying_factor = 1.0;
+        tourism_multiplying_factor_ = 1.0;
     }
 
     
@@ -64,5 +64,5 @@ private:
     int foreigners_change_ = 0;
     
     int square_countryman_can_plant_ = 2;
-    double tourism_multiplying_factor = 1.0;
+    double tourism_multiplying_factor_ = 1.0;
 };
