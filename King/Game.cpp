@@ -97,7 +97,7 @@ public:
     void showStateOnYearStart() {
         // вывести состояние игры
         
-        std::cout << year_ << " год правления" << std::endl;
+        std::cout << "\n" << year_ << " год правления" << std::endl;
         std::cout << "В казне " << account_.getBalance() << " ролодов" << std::endl;
         std::cout << "В стране проживает " << people_.getCountrymen() << " жителей";
         if (people_.getForeigners() > 0) {
@@ -143,7 +143,7 @@ public:
         countTourists_();
         
         // проверка, не окончена ли игра
-        ShowStateOnYearEnd();
+        if (competition_) { ShowStateOnYearEnd(); }
         checkIfGameOver_();
         
         // применить изменения на следующий год
@@ -386,18 +386,16 @@ private:
     }
     
     void ShowStateOnYearEnd() {
-        std::cout << "\nТекущее состояние игры: " << year_ << " год правления, " << account_.getBalance() << " роллодов в казне, " << people_.getCountrymen() << " жителей" << std::endl;
+        std::cout << "\nТекущее состояние игры: " << year_ << " год правления, " << account_.getBalance() << " роллодов в казне, " << people_.getCountrymen() << " жителей, " << people_.getForeigners() << " иностранных рабочих" << std::endl;
         
-        if (competition_) {
-            GameResult resut = GameResult{
-                year_,
-                account_.getBalance(),
-                people_.getCountrymen()};
-            std::hash<GameResult> hashFunction;
+        GameResult resut = GameResult{
+            year_,
+            account_.getBalance(),
+            people_.getCountrymen()};
+        std::hash<GameResult> hashFunction;
 
-            auto year_hash = hashFunction(resut);
-            std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << year_ << "," << account_.getBalance() << "," << people_.getCountrymen() << "\n***" << std::endl;
-        }
+        auto year_hash = hashFunction(resut);
+        std::cout << "Текст для копирования на сайт:\n***\n" << year_hash << "," << year_ << "," << account_.getBalance() << "," << people_.getCountrymen() << "\n***" << std::endl;
     }
     
     void checkIfGameOver_() {
