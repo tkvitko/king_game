@@ -319,18 +319,17 @@ private:
     
     void countHarvest_() {
         // подсчет урожая
-        land_.harvest();
+        int harvesting_worse_trend = land_.harvest();
         std::cout << "С " << land_.getPlantedSquare() << " квадратных миль засеянной земли вы собрали " << land_.getHarvestedSquare() << " квадратных миль урожая" << std::endl;
         
         // причины потери урожая
-//        short harvesting_worse_trend = lost_farm_land - this->last_year_lost_farm_land;
-//        if (lost_farm_land != 0) {
-//            std::cout << "Причина - ";
-//            if (harvesting_worse_trend > 2) {
-//                std::cout << "возросшее ";
-//            };
-//            std::cout << "загрязнение воздуха и воды из-за иностранной промышленности." << std::endl;
-//        }
+        if (harvesting_worse_trend != 0) {
+            std::cout << "Причина - ";
+            if (harvesting_worse_trend > 2) {
+                std::cout << "возросшее ";
+            };
+            std::cout << "загрязнение воздуха и воды из-за иностранной промышленности." << std::endl;
+        }
         
         // учет дохода с урожая
         int revenue = static_cast<int>(land_.getHarvestedSquare() * account_.getPriceOfSellingLand() / 2);

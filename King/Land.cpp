@@ -59,15 +59,22 @@ public:
         farm_square_planted_ = square;
     }
         
-    void harvest() {
+    int harvest() {
         // сбор урожая
         // потеря урожая из-за промышленности
-        short lost_farm_land = static_cast<int>(farm_square_sold_ * (getRandomFloatFromZeroToOne_() + 1.5) / 2);
+        int lost_farm_land = static_cast<int>(farm_square_sold_ * (getRandomFloatFromZeroToOne_() + 1.5) / 2);
         if (lost_farm_land > farm_square_planted_) {
             lost_farm_land = farm_square_planted_;
         }
         farm_square_harvested_ = farm_square_planted_ - lost_farm_land;
         farm_square_harvested_ *= harvest_multiplying_factor_;
+        
+        if (lost_farm_land > 0) {
+            int harvesting_worse_trend = lost_farm_land - last_year_lost_farm_land_;
+            last_year_lost_farm_land_ = lost_farm_land;
+            return harvesting_worse_trend;
+        }
+        return 0;
     }
     
 //    void resetPlanted() {
@@ -85,4 +92,7 @@ private:
     int farm_square_planted_ = 0;
     int farm_square_harvested_ = 0;
     int farm_square_sold_ = 0;
+    
+    // данные прошлого года
+    int last_year_lost_farm_land_;
 };
