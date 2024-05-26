@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <thread>
 #include "Game.hpp"
 #include "GameResult.cpp"
 #include "events.hpp"
@@ -469,6 +470,10 @@ private:
     
     void processEvent_(Event event) {
         std::cout << event.text;
+        std::cout << "\n\n" << std::endl;
+        std::chrono::milliseconds timespan(2000);
+        std::this_thread::sleep_for(timespan);
+        
         account_.add_money(event.change_balance);
         account_.add_money(event.change_balance_by_koef_per_countryman * people_.getCountrymen());
         people_.increase(event.change_countryman);
