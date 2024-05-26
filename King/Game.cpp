@@ -484,7 +484,7 @@ private:
         land_.increaseHarvestMutliplyingFactor(static_cast<double>(event.change_harvest_percentage) / 100);
         account_.increasePriceOfLivingMultiplyingFactor(static_cast<double>(event.change_cost_of_life_percentage) / 100);
 
-        std::cout << "После этого события:" << "\nКазна: " << account_.getBalance() << "\nНаселение: " << people_.getCountrymen() << "\nКоэффициент туризма в этом году: " << people_.getTourismMultiplyingFactor() << "\nКоэффициент урожая в этом году: " << land_.getHarvestMultiplyingFactor() << "\nКоэффициент стоимости жизни в следующем году: " << account_.getPriceOfLivingMultiplyingFactor() << "\nИзменение населения в следующем году: " << next_year_params_.getCountrymanChange() << std::endl;
+//        std::cout << "После этого события:" << "\nКазна: " << account_.getBalance() << "\nНаселение: " << people_.getCountrymen() << "\nКоэффициент туризма в этом году: " << people_.getTourismMultiplyingFactor() << "\nКоэффициент урожая в этом году: " << land_.getHarvestMultiplyingFactor() << "\nКоэффициент стоимости жизни в следующем году: " << account_.getPriceOfLivingMultiplyingFactor() << "\nИзменение населения в следующем году: " << next_year_params_.getCountrymanChange() << std::endl;
         
     }
     
