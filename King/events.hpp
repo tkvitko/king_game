@@ -112,7 +112,7 @@ public:
                            good_event_1, bad_event_1);
         this->quizes.push_back(quiz_1);
         
-        std::vector<std::pair<ChangingField, int>> good_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, 30000)};
+        std::vector<std::pair<ChangingField, int>> good_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, 40000)};
         Event good_event_2 = Event("Служба внешней разведки доложила, что господин бывший президент с семьёй был успешно вывезен с территории сопредельного государства. Операция была замаскирована под похищение конкурирующей партией, так что к нам вопросов нет.\n", good_params_2);
         
         std::vector<std::pair<ChangingField, int>> bad_params_2 = {std::pair<ChangingField, int>(ChangingField::balance, -20000)};

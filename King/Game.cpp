@@ -329,7 +329,7 @@ private:
         
         // причины потери урожая
         if (harvesting_worse_trend != 0) {
-            std::cout << "Причина - ";
+            std::cout << "Причина потери урожая - ";
             if (harvesting_worse_trend > 2) {
                 std::cout << "возросшее ";
             };
@@ -421,7 +421,7 @@ private:
         }
         
         // если слишком мало жителей
-        if (people_.getCountrymen() < 343) {
+        if (people_.getCountrymen() < people_.getStartCountrymen() / 3) {
             std::cout << GAME_OVER_BECAUSE_DIES << std::endl;
             throw GameOver();
         }

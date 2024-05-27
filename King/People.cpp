@@ -10,7 +10,9 @@
 class People {
 public:
     People() {};
-    People(int countrymen) : countrymen_(countrymen) {};
+    People(int countrymen) : countrymen_(countrymen) {
+        start_countrymen_ = countrymen;
+    };
     
     // получение данных
     int getCountrymen() { return countrymen_;}
@@ -21,6 +23,7 @@ public:
     int getForeignersChange() { return foreigners_change_; }
     int getSettled() { return countrymen_ - population_change_; }
     double getTourismMultiplyingFactor() { return tourism_multiplying_factor_; }
+    int getStartCountrymen() { return start_countrymen_; }
     
     // изменение данных
     void decrease(int count) { countrymen_ -= count; }
@@ -59,6 +62,7 @@ public:
     
 private:
     int countrymen_ = 500;
+    int start_countrymen_ = 500;
     int foreigners_ = 0;
     int population_change_ = 0;
     int foreigners_change_ = 0;
