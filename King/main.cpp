@@ -9,6 +9,7 @@
 #include <fstream>
 #include <random>
 #include <functional>
+#include <thread>
 #include "utils.hpp"
 #include "strings.hpp"
 #include "constants.h"
@@ -293,7 +294,7 @@ private:
         // причины потери урожая
         short harvesting_worse_trend = lost_farm_land - this->last_year_lost_farm_land;
         if (lost_farm_land != 0) {
-            std::cout << "Причина - ";
+            std::cout << "Причина потери урожая - ";
             if (harvesting_worse_trend > 2) {
                 std::cout << "возросшее ";
             };
@@ -355,7 +356,10 @@ private:
     
     void processEvent_(Event event) {
         std::cout << event.text;
-//        std::cin.get();
+        std::cout << "\n\n" << std::endl;
+        std::chrono::milliseconds timespan(2000);
+        std::this_thread::sleep_for(timespan);
+        
         this->balance += event.change_balance;
         this->balance += event.change_balance_by_koef_per_countryman * this->countrymen;
         this->countrymen += event.change_countryman;
@@ -412,7 +416,7 @@ public:
         std::cout << "(на основе игры The King, опубликованной в Basic Computer Games в 1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.6.7" << std::endl;
+        std::cout << "Version 1.7.0" << std::endl;
         std::cout << "Спасибо за тесты Алику Гаджимурадову, Никите Цековцу, Enola\n" << std::endl;
         std::cout << "Команды:\n- restart - перезапуск игры\n- exit    - выход из игры\n\n\n";
     }
@@ -425,7 +429,7 @@ public:
     void printState() {
         // вывести состояние игры
         
-        std::cout << this->years << " год правления" << std::endl;
+        std::cout << "\n" << this->years << " год правления" << std::endl;
         std::cout << "В казне " << this->balance << " ролодов" << std::endl;
         std::cout << "В стране проживает " << this->countrymen << " жителей";
         if (this->foreigners > 0) {
@@ -545,9 +549,9 @@ public:
     bool countYearResults() {
         // вычислить результаты года
         
-        std::cout << "\nТекущее состояние игры: " << this->years << " год правления, " << this->balance << " роллодов в казне, " << this->countrymen << " жителей" << std::endl;
-        
         if (this->competition) {
+            std::cout << "\nТекущее состояние игры: " << this->years << " год правления, " << this->balance << " роллодов в казне, " << this->countrymen << " жителей" << std::endl;
+        
             GameResult resut = GameResult{
                 this->years,
                 this->balance,
