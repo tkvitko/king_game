@@ -73,7 +73,12 @@ int main(int argc, const char * argv[]) {
             continue;
         } catch (GameOver& e) {
             std::cout << "Game Over" << std::endl;
+#if defined(_WIN32)
             system("pause");
+#else
+            std::cout << "Press Enter to continue..." << std::endl;
+            system("read");
+#endif
             return 0;
         }
     }
