@@ -417,7 +417,7 @@ public:
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
         std::cout << "Version 1.7.0" << std::endl;
-        std::cout << "Спасибо за тесты Алику Гаджимурадову, Никите Цековцу, Enola, Антону Ласточкину и Сергею Козлову\n" << std::endl;
+        std::cout << "Спасибо за тесты Алику Гаджимурадову, Никите Цейковцу, Enola, Антону Ласточкину и Сергею Козлову\n" << std::endl;
         std::cout << "Команды:\n- restart - перезапуск игры\n- exit    - выход из игры\n\n\n";
     }
     
