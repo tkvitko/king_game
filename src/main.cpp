@@ -10,10 +10,11 @@
 #include <random>
 #include <functional>
 #include <thread>
+
 #include "utils.hpp"
 #include "strings.hpp"
 #include "exceptions.hpp"
-#include "Game.cpp"
+#include "Game.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>

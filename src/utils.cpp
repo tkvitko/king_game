@@ -47,9 +47,6 @@ short get_random_choise(short choises_number, short probability) {
 
 int get_random_short_from_range(const int min_value, const int max_value) {
     int range = max_value - min_value;
-    // сон секунду на случай частых вызовов
-//    std::chrono::milliseconds timespan(1000);
-//    std::this_thread::sleep_for(timespan);
     
     // случайное значение из range
     std::srand(std::time(0));
@@ -58,9 +55,8 @@ int get_random_short_from_range(const int min_value, const int max_value) {
 }
 
 
-
 bool is_integer_str(const std::string& text) {
-
+    // является ли строка числом
     for (char symbol : text) {
             if (!isdigit(symbol)) {
                 return false;
@@ -70,6 +66,7 @@ bool is_integer_str(const std::string& text) {
 }
 
 bool is_in_limits(int num, int min, int max) {
+    // входит ли число в заданные пределы
     if (num < min || num > max) {
         return false;
     }
@@ -77,10 +74,12 @@ bool is_in_limits(int num, int min, int max) {
 }
 
 void show_tip(int min, int max) {
+    // показать подсказку (границы вводимого значения)
     std::cout << "Введите число от " << min << " до " << max << std::endl;
 }
 
 int get_valid_integer_input(int min, int max, bool need_tip) {
+    // получить от пользователя корректное число
     
     if (need_tip) {
         show_tip(min, max);

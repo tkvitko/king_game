@@ -1,8 +1,0 @@
-cmake_minimum_required(VERSION 3.20)
-project(premier)
-if(MSVC)
-add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-endif()
-add_executable(premier King/Account.cpp King/Game.hpp King/Land.cpp King/People.hpp King/events.hpp King/main.cpp King/utils.hpp King/Account.hpp King/GameResult.cpp King/Land.hpp King/exceptions.cpp King/strings.hpp King/Game.cpp King/GameResult.hpp King/People.cpp King/constants.h King/exceptions.hpp King/utils.cpp)
-target_compile_features(premier PRIVATE cxx_std_17)
