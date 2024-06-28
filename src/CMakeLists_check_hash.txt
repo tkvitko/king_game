@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.20)
+set (PROJECT_NAME check_hash)
+project(${PROJECT_NAME})
+
+if(MSVC)
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+endif()
+
+set (SOURCES 
+    GameResult.cpp
+    check_hash.cpp
+    utils.cpp
+    exceptions.cpp
+)
+
+set (HEADERS
+    GameResult.hpp
+    check_hash.hpp
+    utils.hpp
+    exceptions.hpp
+)
+
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

@@ -32,7 +32,12 @@ Game::Game(bool custom_game, bool random_events_enabled, bool competition) {
     random_events_enabled_ = random_events_enabled;
     competition_ = competition;
     
-    if (!custom_game_) {
+    if (competition) {
+        land_ = Land(1000, 1000);
+        people_ = People(START_COUNTRYMAN_COMPETITION);
+        account_ = Account(START_BALANCE_COMPETITION);
+        
+    } else if (!custom_game_) {
         land_ = Land(1000, 1000);
         people_ = People(get_random_short_from_range(START_COUNTRYMAN_MIN, START_COUNTRYMAN_MAX));
         account_ = Account(get_random_short_from_range(START_BALANCE_MIN, START_BALANCE_MAX));
