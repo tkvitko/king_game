@@ -10,7 +10,18 @@
 #include "GameResult.hpp"
 #include "utils.hpp"
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
+
 int main(int argc, const char * argv[]) {
+    
+    #ifdef _WIN32
+     SetConsoleOutputCP(CP_UTF8);
+    #else
+     setlocale(LC_CTYPE, "rus");
+    #endif
     
     std::cout << "Год правления: " << std::endl;
     int year = get_valid_integer_input(0, 8, true);
