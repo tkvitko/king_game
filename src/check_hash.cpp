@@ -30,7 +30,7 @@ int main(int argc, const char * argv[]) {
     int balance = get_valid_integer_input(1, 500000, true);
     
     std::cout << "Население: " << std::endl;
-    int countrymen = get_valid_integer_input(1, 2000, true);
+    int countrymen = get_valid_integer_input(1, 10000, true);
     
     GameResult result = GameResult{year, balance, countrymen};
     std::hash<GameResult> hashFunction;
